@@ -43,7 +43,7 @@ variable "ecs_bridge_network_mode" {
 variable "oidc_repos_list" {
   type = list(string)
   default = [
-    "kosli-dev/cyber-dojo-base-infra"
+    "cyber-dojo/terraform-modules"
   ]
 }
 
@@ -67,4 +67,9 @@ variable "ebs_snapshot_retention_period_days" {
   type        = string
   description = "How long to store cdb_data EBS snapshots in days"
   default     = 14
+}
+
+variable "create_tf_modules_bucket" {
+  type    = bool
+  default = false
 }

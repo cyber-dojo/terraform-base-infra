@@ -1,9 +1,11 @@
-env_name                   = "staging"
+env_name                   = "prod"
 vpc_single_nat_gateway     = true
 vpc_one_nat_gateway_per_az = false
 vpc_azs_max                = 2
 ecs_bridge_network_mode    = true
-create_tf_modules_bucket   = true
+ebs_size                   = 100
+
+ebs_snapshot_retention_period_days = 60
 
 ecs_clusters = {
   app = {

@@ -104,3 +104,55 @@ module "alb_access_logs_bucket" {
   tags = local.tags
 }
 
+# S3 for terraform modules
+module "terraform_modules_bucket" {
+  count   = var.create_tf_modules_bucket ? 1 : 0
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "3.2.3"
+
+  bucket        = local.terraform_modules_bucket_name
+  acl           = "private"
+  attach_policy = true
+  policy        = data.aws_iam_policy_document.s3_tf_modules.json
+
+  versioning = {
+    enabled = true
+  }
+
+  server_side_encryption_configuration = {
+    rule = {
+      apply_server_side_encryption_by_default = {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+
+  tags = module.tags.result
+}
+
+data "aws_iam_policy_document" "s3_tf_modules" {
+  statement {
+    sid = "AllowReadFromAllAccounts"
+    actions = [
+      "s3:Get*",
+      "s3:List*"
+    ]
+    # Allow access to tf modules bucket from other AWS accounts
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::244531986313:root",
+        "arn:aws:iam::274425519734:root"
+      ]
+    }
+    resources = [
+      "arn:aws:s3:::${local.terraform_modules_bucket_name}",
+      "arn:aws:s3:::${local.terraform_modules_bucket_name}/*"
+    ]
+  }
+}
