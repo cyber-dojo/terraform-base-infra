@@ -1,4 +1,40 @@
-data "aws_iam_policy_document" "ci" {
+# Enable access from terraform-modules repo to upload terraform modules to the s3
+data "aws_iam_policy_document" "gh_actions_terraform_modules" {
+  count = var.create_tf_modules_bucket ? 1 : 0
+  statement {
+    sid    = "S3Put"
+    effect = "Allow"
+    actions = [
+      "s3:PutObject"
+    ]
+    resources = [
+      "${module.terraform_modules_bucket[0].s3_bucket_arn}/*"
+    ]
+  }
+}
+
+module "oidc_terraform_modules_role" {
+  count       = var.create_tf_modules_bucket ? 1 : 0
+  source = "./oidc_role"
+  role_name = "gh_actions_terraform_modules"
+  oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
+  policy_json = data.aws_iam_policy_document.gh_actions_terraform_modules[0].json
+  tags = module.tags.result
+  oidc_repos_list = ["cyber-dojo/terraform-modules"]
+}
+
+# Enable services deployment for the services repositories
+data "aws_iam_policy_document" "gh_actions_services" {
+  statement {
+    sid    = "S3ListBuckets"
+    effect = "Allow"
+    actions = [
+      "s3:ListAllMyBuckets"
+    ]
+    resources = [
+      "*"
+    ]
+  }
   statement {
     sid    = "S3Write"
     effect = "Allow"
@@ -7,20 +43,28 @@ data "aws_iam_policy_document" "ci" {
       "s3:PutObject"
     ]
     resources = [
-      "${module.state_bucket.s3_bucket_arn}/*",
-      "arn:aws:s3:::terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/*"
+      "${module.state_bucket.s3_bucket_arn}/terraform/creator*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/custom-start-points*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/dashboard*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/differ*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/exercises-start-points*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/languages-start-points*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/nginx*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/repler*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/runner*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/saver*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/shas*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/web*"
     ]
   }
   statement {
     sid    = "S3Read"
     effect = "Allow"
     actions = [
-      "s3:List*",
-      "s3:Describe*",
-      "s3:Get*"
+      "s3:GetObject"
     ]
     resources = [
-      "*"
+      "arn:aws:s3:::terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/*"
     ]
   }
   statement {
@@ -60,7 +104,27 @@ data "aws_iam_policy_document" "ci" {
       "ecr:CompleteLayerUpload"
     ]
     resources = [
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*"
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/creator",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/custom-start-points",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/dashboard",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/differ",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/exercises-start-points",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/languages-start-points",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/nginx",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/repler",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/runner",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/saver",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/shas",
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/web"
+    ]
+  }
+  statement {
+    sid = "ECRDescribeRegistry"
+    actions = [
+      "ecr:DescribeRegistry"
+    ]
+    resources = [
+      "*"
     ]
   }
   statement {
@@ -68,6 +132,20 @@ data "aws_iam_policy_document" "ci" {
     actions = [
       "ecr:GetAuthorizationToken",
       "ecr:GetRegistryPolicy"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "Logs"
+    effect = "Allow"
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:ListTagsLogGroup",
+      "logs:CreateLogGroup",
+      "logs:PutRetentionPolicy",
+      "logs:DeleteLogGroup"
     ]
     resources = [
       "*"
@@ -88,37 +166,13 @@ data "aws_iam_policy_document" "ci" {
     ]
   }
   statement {
-    sid    = "SecretManager"
+    sid    = "servicediscovery"
     effect = "Allow"
     actions = [
-      "secretsmanager:DescribeSecret",
-      "secretsmanager:GetResourcePolicy",
-      "secretsmanager:GetSecretValue"
-    ]
-    resources = [
-      "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:*"
-    ]
-  }
-  statement {
-    sid    = "ACM"
-    effect = "Allow"
-    actions = [
-      "acm:DescribeCertificate",
-      "acm:ListTagsForCertificate"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "Logs"
-    effect = "Allow"
-    actions = [
-      "logs:DescribeLogGroups",
-      "logs:ListTagsLogGroup",
-      "logs:CreateLogGroup",
-      "logs:PutRetentionPolicy",
-      "logs:DeleteLogGroup"
+      "servicediscovery:GetNamespace",
+      "servicediscovery:ListNamespaces",
+      "servicediscovery:ListTagsForResource",
+      "servicediscovery:GetService"
     ]
     resources = [
       "*"
@@ -168,62 +222,15 @@ data "aws_iam_policy_document" "ci" {
     ]
   }
   statement {
-    sid = "OIDCGitHub"
-    actions = [
-      "iam:ListOpenIDConnectProviderTags",
-      "iam:UntagOpenIDConnectProvider",
-      "iam:DeleteOpenIDConnectProvider",
-      "iam:GetOpenIDConnectProvider",
-      "iam:TagOpenIDConnectProvider",
-      "iam:CreateOpenIDConnectProvider",
-    ]
-    resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
-    ]
-  }
-  statement {
-    sid    = "SSO"
+    sid    = "ecs"
     effect = "Allow"
     actions = [
-      "sso:Get*",
-      "sso:List*",
-      "sso:Describe*"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "Lambda"
-    effect = "Allow"
-    actions = [
-      "lambda:Get*",
-      "lambda:List*",
-      "lambda:Describe*"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "SNS"
-    effect = "Allow"
-    actions = [
-      "SNS:Get*",
-      "SNS:List*",
-      "SNS:Describe*"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "EventBridge"
-    effect = "Allow"
-    actions = [
-      "events:Get*",
-      "events:Describe*",
-      "events:List*"
+      "ecs:Describe*",
+      "ecs:RegisterTaskDefinition",
+      "ecs:DeregisterTaskDefinition",
+      "ecs:CreateService",
+      "ecs:UpdateService",
+      "ecs:DeleteService"
     ]
     resources = [
       "*"
@@ -264,44 +271,11 @@ data "aws_iam_policy_document" "ci" {
     ]
   }
   statement {
-    sid    = "servicediscovery"
+    sid    = "ACM"
     effect = "Allow"
     actions = [
-      "servicediscovery:GetNamespace",
-      "servicediscovery:ListTagsForResource"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "rds"
-    effect = "Allow"
-    actions = [
-      "rds:DescribeDBSubnetGroups",
-      "rds:ListTagsForResource"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "ecs"
-    effect = "Allow"
-    actions = [
-      "ecs:ListAccountSettings",
-      "ecs:DeleteCapacityProvider",
-      "ecs:DeleteCluster",
-      "ecs:Describe*",
-      "ecs:PutClusterCapacityProviders",
-      "ecs:UpdateCapacityProvider",
-      "ecs:UpdateCluster",
-      "ecs:UpdateClusterSettings",
-      "ecs:RegisterTaskDefinition",
-      "ecs:DeregisterTaskDefinition",
-      "ecs:CreateService",
-      "ecs:UpdateService",
-      "ecs:DeleteService"
+      "acm:DescribeCertificate",
+      "acm:ListTagsForCertificate"
     ]
     resources = [
       "*"
@@ -309,20 +283,30 @@ data "aws_iam_policy_document" "ci" {
   }
 }
 
-data "aws_iam_policy" "admin" {
-  name = "AdministratorAccess"
+resource "aws_iam_policy" "gh_actions_services" {
+  name        = "services"
+  description = "services"
+  policy      = data.aws_iam_policy_document.gh_actions_services.json
 }
 
-resource "aws_iam_policy" "ci" {
-  name        = "ci"
-  description = "ci policy"
-  policy      = data.aws_iam_policy_document.ci.json
-  tags        = module.tags.result
-}
-
-# Attach permissions to OIDC role
-resource "aws_iam_role_policy_attachment" "app_ci" {
-  role = module.oidc.role_name
-  #policy_arn = aws_iam_policy.ci.arn
-  policy_arn = data.aws_iam_policy.admin.arn
+module "oidc_services_role" {
+  source = "./oidc_role"
+  role_name = "gh_actions_services"
+  oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
+  policy_json = data.aws_iam_policy_document.gh_actions_services.json
+  tags = module.tags.result
+  oidc_repos_list = [
+    "cyber-dojo/creator",
+    "cyber-dojo/custom-start-points",
+    "cyber-dojo/dashboard",
+    "cyber-dojo/differ",
+    "cyber-dojo/exercises-start-points",
+    "cyber-dojo/languages-start-points",
+    "cyber-dojo/nginx",
+    "cyber-dojo/repler",
+    "cyber-dojo/runner",
+    "cyber-dojo/saver",
+    "cyber-dojo/shas",
+    "cyber-dojo/web"
+  ]
 }

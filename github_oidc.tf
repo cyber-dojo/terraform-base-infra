@@ -1,6 +1,23 @@
 # Create OIDC provider
 # https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html  
-module "oidc" {
-  source          = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v2"
-  oidc_repos_list = var.oidc_repos_list
+
+
+#module "oidc" {
+#  source          = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v2"
+#  oidc_repos_list = ["cyber-dojo/terraform-modules"]
+#}
+
+
+resource "aws_iam_openid_connect_provider" "github" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.github_actions_oidc_provider.certificates[0].sha1_fingerprint]
+}
+
+data "tls_certificate" "github_actions_oidc_provider" {
+
+  # Read https://github.blog/changelog/2022-01-13-github-actions-update-on-oidc-based-deployments-to-aws/
+
+  url = "https://token.actions.githubusercontent.com/.well-known/openid-configuration"
+
 }

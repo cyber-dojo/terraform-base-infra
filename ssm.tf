@@ -39,9 +39,3 @@ resource "aws_ssm_parameter" "alb_zone_id" {
   type  = "String"
   value = module.alb.lb_zone_id
 }
-
-resource "aws_ssm_parameter" "oidc_role_arn" {
-  name  = "oidc_role_arn"
-  type  = "String"
-  value = module.oidc.role_arn
-}
