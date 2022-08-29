@@ -1,0 +1,15 @@
+name: 'prod'
+
+on:
+  push:
+    branches: [ prod ]
+  schedule:
+    - cron: '0 6 * * 0' # 06:00 UTC on Sun
+
+jobs:
+  prod:
+    uses: cyber-dojo/terraform-base-infra/.github/workflows/base.yml@master
+    with:
+      aws_region: eu-central-1
+      aws_account_id: 274425519734
+      aws_default_region: eu-central-1

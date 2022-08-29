@@ -1,3 +1,240 @@
+# Enable access from terraform-base-infra repo to check the configuration drift
+data "aws_iam_policy_document" "gh_actions_base_infra" {
+  statement {
+    sid    = "S3ListBuckets"
+    effect = "Allow"
+    actions = [
+      "s3:ListAllMyBuckets"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "S3Write"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+    resources = [
+      "${module.state_bucket.s3_bucket_arn}/terraform/terraform-base-infra*"
+    ]
+  }
+  statement {
+    sid    = "DynamoDB"
+    effect = "Allow"
+    actions = [
+      "dynamodb:Get*",
+      "dynamodb:Describe*",
+      "dynamodb:List*",
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "ACM"
+    effect = "Allow"
+    actions = [
+      "acm:DescribeCertificate",
+      "acm:ListTagsForCertificate"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid = "IAMRO"
+    actions = [
+      "iam:GetGroup",
+      "iam:GetGroupPolicy",
+      "iam:GetInstanceProfile",
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:GetSAMLProvider",
+      "iam:GetUser",
+      "iam:GetUserPolicy",
+      "iam:ListAccessKeys",
+      "iam:ListAttachedGroupPolicies",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListAttachedUserPolicies",
+      "iam:ListEntitiesForPolicy",
+      "iam:ListGroupPolicies",
+      "iam:ListGroupsForUser",
+      "iam:ListInstanceProfileTags",
+      "iam:ListInstanceProfiles",
+      "iam:ListInstanceProfilesForRole",
+      "iam:ListPolicies",
+      "iam:ListPolicyTags",
+      "iam:ListPolicyVersions",
+      "iam:ListRolePolicies",
+      "iam:ListRoleTags",
+      "iam:ListSAMLProviderTags",
+      "iam:ListServiceSpecificCredentials",
+      "iam:ListUserPolicies",
+      "iam:ListUserTags",
+      "iam:PassRole"
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/*",
+      "arn:aws:iam::aws:policy/AdministratorAccess"
+    ]
+  }
+  statement {
+    sid    = "ec2"
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeRegions",
+      "ec2:DescribeAccountAttributes",
+      "ec2:DescribeVolumes",
+      "ec2:GetEbsEncryptionByDefault",
+      "ec2:DescribeVpcAttribute",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeSpotPriceHistory",
+      "ec2:DescribeAddresses",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeNetworkAcls",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeFlowLogs",
+      "ec2:DescribeNatGateways",
+      "ec2:DescribeLaunchTemplates",
+      "ec2:DescribeLaunchTemplateVersions",
+      "autoscaling:DescribeAutoScalingGroups",
+      "autoscaling:DescribeLifecycleHooks",
+      "elasticloadbalancing:Describe*",
+      "elasticloadbalancing:CreateTargetGroup",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:CreateRule",
+      "elasticloadbalancing:DeleteRule"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "ecs"
+    effect = "Allow"
+    actions = [
+      "ecs:List*",
+      "ecs:DeleteCapacityProvider",
+      "ecs:DeleteCluster",
+      "ecs:Describe*",
+      "ecs:Get*",
+      "ecs:PutClusterCapacityProviders",
+      "ecs:UpdateCapacityProvider",
+      "ecs:UpdateCluster",
+      "ecs:UpdateClusterSettings",
+      "ecs:RegisterTaskDefinition",
+      "ecs:DeregisterTaskDefinition",
+      "ecs:CreateService",
+      "ecs:UpdateService",
+      "ecs:DeleteService"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "SSM"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:DescribeParameters",
+      "ssm:ListTagsForResource"
+    ]
+    resources = [
+      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:ssm:${data.aws_region.current.name}::parameter/*"
+    ]
+  }
+  statement {
+    sid    = "S3Read"
+    effect = "Allow"
+    actions = [
+      "s3:List*",
+      "s3:Describe*",
+      "s3:Get*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid = "OIDCGitHub"
+    actions = [
+      "iam:ListOpenIDConnectProviderTags",
+      "iam:UntagOpenIDConnectProvider",
+      "iam:DeleteOpenIDConnectProvider",
+      "iam:GetOpenIDConnectProvider",
+      "iam:TagOpenIDConnectProvider",
+      "iam:CreateOpenIDConnectProvider",
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
+    ]
+  }
+  statement {
+    sid    = "servicediscovery"
+    effect = "Allow"
+    actions = [
+      "servicediscovery:Get*",
+      "servicediscovery:List*",
+      "servicediscovery:Describe*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "rds"
+    effect = "Allow"
+    actions = [
+      "rds:Describe*",
+      "rds:List*",
+      "rds:Get*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "DLMro"
+    effect = "Allow"
+    actions = [
+      "dlm:Describe*",
+      "dlm:List*",
+      "dlm:Get*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+module "oidc_base_infra_role" {
+  source            = "./oidc_role"
+  role_name         = "gh_base_infra"
+  oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
+  policy_json       = data.aws_iam_policy_document.gh_actions_base_infra.json
+  tags              = module.tags.result
+  oidc_repos_list   = ["cyber-dojo/terraform-base-infra"]
+}
+
 # Enable access from merkely-environment-reporter repo to deploy Kosli reporters
 data "aws_iam_policy_document" "gh_actions_reporter" {
   statement {
