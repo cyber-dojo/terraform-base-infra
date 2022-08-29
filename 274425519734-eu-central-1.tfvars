@@ -3,7 +3,7 @@ vpc_single_nat_gateway     = true
 vpc_one_nat_gateway_per_az = false
 vpc_azs_max                = 2
 ecs_bridge_network_mode    = true
-ebs_size                   = 100
+ebs_size                   = 700
 
 ebs_snapshot_retention_period_days = 60
 
