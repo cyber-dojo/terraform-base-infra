@@ -25,7 +25,7 @@ resource "aws_ecs_account_setting_default" "task_long_arn" {
 
 resource "aws_ecs_account_setting_default" "container_insights" {
   name  = "containerInsights"
-  value = "enabled"
+  value = "disabled"
 }
 
 resource "aws_iam_service_linked_role" "autoscaling" {
