@@ -3,13 +3,13 @@ vpc_single_nat_gateway     = true
 vpc_one_nat_gateway_per_az = false
 vpc_azs_max                = 2
 ecs_bridge_network_mode    = true
-ebs_size                   = 700
+ebs_size                   = 150
 
 ebs_snapshot_retention_period_days = 60
 
 ecs_clusters = {
   app = {
-    instance_type          = "c5a.xlarge"
+    instance_types_list    = ["c5a.xlarge", "c5.xlarge"]
     managed_scaling_status = "DISABLED"
 
     ecs_cluster_desired_capacity                         = 1

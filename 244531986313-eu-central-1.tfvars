@@ -7,7 +7,7 @@ create_tf_modules_bucket   = true
 
 ecs_clusters = {
   app = {
-    instance_type          = "c5a.xlarge"
+    instance_types_list    = ["c5a.xlarge", "c5.xlarge"]
     managed_scaling_status = "DISABLED"
 
     ecs_cluster_desired_capacity                         = 1

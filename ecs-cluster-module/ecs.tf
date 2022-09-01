@@ -4,7 +4,7 @@ resource "aws_launch_template" "this" {
   description            = "ecs-lt-${var.ecs_cluster_name}"
   update_default_version = true
   image_id               = data.aws_ssm_parameter.amazon_linux_ecs.value
-  instance_type          = var.instance_type
+  instance_type          = var.instance_types_list[0]
   ebs_optimized          = true
   user_data              = data.cloudinit_config.this.rendered
   tag_specifications {
@@ -39,7 +39,7 @@ module "ec2_spot_price" {
   source                        = "fivexl/ec2-spot-price/aws"
   version                       = "2.0.0"
   availability_zones_names_list = var.vpc_azs
-  instance_types_list           = [var.instance_type]
+  instance_types_list           = var.instance_types_list
   custom_price_modifier         = 1.1
   normalization_modifier        = 100
 }
@@ -64,8 +64,11 @@ resource "aws_autoscaling_group" "this" {
         launch_template_id = aws_launch_template.this.id
         version            = aws_launch_template.this.latest_version
       }
-      override {
-        instance_type = var.instance_type
+      dynamic "override" {
+        for_each = var.instance_types_list
+        content {
+          instance_type = override.value
+        }
       }
     }
     instances_distribution {

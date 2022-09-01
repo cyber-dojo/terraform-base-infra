@@ -32,9 +32,9 @@ variable "ecs_bridge_network_mode" {
   default = false
 }
 
-variable "instance_type" {
-  description = "The type of the ECS ec2 instance"
-  type        = string
+variable "instance_types_list" {
+  description = "The list of the ECS ec2 instance types"
+  type        = list(any)
 }
 
 variable "managed_scaling_status" {

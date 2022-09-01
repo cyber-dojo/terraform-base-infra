@@ -5,7 +5,7 @@ module "ecs_cluster" {
   aws_region                  = data.aws_region.current.name
   vpc_id                      = module.vpc.vpc_id
   vpc_azs                     = module.vpc.azs
-  instance_type               = each.value.instance_type
+  instance_types_list         = each.value.instance_types_list
   managed_scaling_status      = each.value.managed_scaling_status
   spot_price_vpc_azs          = module.vpc.azs
   asg_service_linked_role_arn = aws_iam_service_linked_role.autoscaling.arn
