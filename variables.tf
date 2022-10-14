@@ -60,7 +60,7 @@ variable "alb_ingress_cidr_blocks" {
 
 variable "ebs_size" {
   type    = number
-  default = 30
+  default = 60
 }
 
 variable "ebs_snapshot_retention_period_days" {

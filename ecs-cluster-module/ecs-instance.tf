@@ -79,6 +79,7 @@ locals {
     ECS_CONTAINER_INSTANCE_TAGS = jsonencode(var.tags)
   })
   cloudwatch_agent_config_sh = templatefile("${path.module}/templates/amazon-cloudwatch-agent.sh", {})
+  docker_cleanup_sh = templatefile("${path.module}/templates/docker_cleanup.sh", {})
   attach_ebs_sh = templatefile("${path.module}/templates/attach_ebs.sh", {
     VOLUME_ID = var.ebs_id
   })
@@ -94,6 +95,10 @@ data "cloudinit_config" "this" {
   part {
     content_type = "text/x-shellscript"
     content      = local.ecs_config_sh
+  }
+  part {
+    content_type = "text/x-shellscript"
+    content      = local.docker_cleanup_sh
   }
   part {
     content_type = "text/x-shellscript"
