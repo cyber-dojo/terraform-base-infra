@@ -81,3 +81,28 @@ variable "ecs_cluster_on_demand_percentage_above_base_capacity" {
 variable "ebs_id" {
   type = string
 }
+
+variable "monit_version" {
+  type = string
+  default = "5.32.0"
+}
+
+variable "env" {
+  type = string
+}
+
+# https://github.com/cloudposse/slack-notifier
+variable "slack_notifier_version" {
+  type = string
+  default = "0.4.0"
+}
+
+variable "slack_webhook_url" {
+  type = string
+  default = "https://hooks.slack.com/services/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"
+}
+
+variable "docker_gc_grace_period_seconds" {
+  type = number
+  default = 432000
+}
