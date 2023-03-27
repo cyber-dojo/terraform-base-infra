@@ -255,7 +255,7 @@ data "aws_iam_policy_document" "gh_actions_reporter" {
       "s3:PutObject"
     ]
     resources = [
-      "${module.state_bucket.s3_bucket_arn}/terraform/merkely-environment-reporter*"
+      "${module.state_bucket.s3_bucket_arn}/terraform/kosli-environment-reporter*"
     ]
   }
   statement {
@@ -359,7 +359,8 @@ data "aws_iam_policy_document" "gh_actions_reporter" {
     actions = [
       "events:Get*",
       "events:Describe*",
-      "events:List*"
+      "events:List*",
+      "events:PutRule"
     ]
     resources = [
       "*"
@@ -399,7 +400,7 @@ module "oidc_reporter_role" {
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
   policy_json       = data.aws_iam_policy_document.gh_actions_reporter.json
   tags              = module.tags.result
-  oidc_repos_list   = ["cyber-dojo/merkely-environment-reporter"]
+  oidc_repos_list   = ["cyber-dojo/kosli-environment-reporter"]
 }
 
 # Enable access from terraform-modules repo to upload terraform modules to the s3

@@ -7,6 +7,13 @@ resource "aws_launch_template" "this" {
   instance_type          = var.instance_types_list[0]
   ebs_optimized          = true
   user_data              = data.cloudinit_config.this.rendered
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size = var.ebs_root_size
+    }
+  }
   tag_specifications {
     resource_type = "instance"
     tags          = { "Name" : var.ecs_cluster_name }

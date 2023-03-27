@@ -79,17 +79,14 @@ locals {
     ECS_CONTAINER_INSTANCE_TAGS = jsonencode(var.tags)
   })
   cloudwatch_agent_config_sh = templatefile("${path.module}/templates/amazon-cloudwatch-agent.sh", {})
-  docker_cleanup_sh          = templatefile("${path.module}/templates/docker_cleanup.sh", {
-    DOCKER_GC_GRACE_PERIOD_SECONDS = var.docker_gc_grace_period_seconds
-  })
   attach_ebs_sh = templatefile("${path.module}/templates/attach_ebs.sh", {
     VOLUME_ID = var.ebs_id
   })
   monit_setup_sh = templatefile("${path.module}/templates/monit_setup.sh", {
     SLACK_NOTIFIER_VERSION = var.slack_notifier_version
-    SLACK_WEBHOOK_URL = var.slack_webhook_url
-    SLACK_MESSAGE_TITLE = var.env
-    MONIT_VERSION = var.monit_version
+    SLACK_WEBHOOK_URL      = var.slack_webhook_url
+    SLACK_MESSAGE_TITLE    = var.env
+    MONIT_VERSION          = var.monit_version
   })
 }
 
@@ -103,10 +100,6 @@ data "cloudinit_config" "this" {
   part {
     content_type = "text/x-shellscript"
     content      = local.ecs_config_sh
-  }
-  part {
-    content_type = "text/x-shellscript"
-    content      = local.docker_cleanup_sh
   }
   part {
     content_type = "text/x-shellscript"

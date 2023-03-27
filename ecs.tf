@@ -13,6 +13,7 @@ module "ecs_cluster" {
   asg_vpc_zone_identifier     = [module.vpc.private_subnets[0]]
   ingress_allowed_sg_id       = local.ecs_node_ingress_allowed_sg_id
   ebs_id                      = module.ebs.ebs_id
+  ebs_root_size               = var.ebs_root_size
 
   docker_gc_grace_period_seconds = 432000
 

@@ -63,6 +63,11 @@ variable "ebs_size" {
   default = 60
 }
 
+variable "ebs_root_size" {
+  type    = number
+  default = 30
+}
+
 variable "ebs_snapshot_retention_period_days" {
   type        = string
   description = "How long to store cdb_data EBS snapshots in days"

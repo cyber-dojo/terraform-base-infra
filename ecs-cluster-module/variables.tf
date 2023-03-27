@@ -82,8 +82,12 @@ variable "ebs_id" {
   type = string
 }
 
+variable "ebs_root_size" {
+  type = number
+}
+
 variable "monit_version" {
-  type = string
+  type    = string
   default = "5.32.0"
 }
 
@@ -93,16 +97,16 @@ variable "env" {
 
 # https://github.com/cloudposse/slack-notifier
 variable "slack_notifier_version" {
-  type = string
+  type    = string
   default = "0.4.0"
 }
 
 variable "slack_webhook_url" {
-  type = string
+  type    = string
   default = "https://hooks.slack.com/services/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"
 }
 
 variable "docker_gc_grace_period_seconds" {
-  type = number
+  type    = number
   default = 432000
 }
