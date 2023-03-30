@@ -388,8 +388,8 @@ data "aws_iam_policy_document" "gh_actions_reporter" {
       "lambda:AddPermission"
     ]
     resources = [
-      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:reporter-kosli-staging*",
-      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:reporter-kosli-prod*"
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:kosli-staging*",
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:kosli-prod*"
     ]
   }
 }
