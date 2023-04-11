@@ -8,8 +8,10 @@ on:
 
 jobs:
   beta:
-    uses: cyber-dojo/terraform-base-infra/.github/workflows/base.yml@master
+    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.1
     with:
       aws_region: eu-central-1
-      aws_account_id: 244531986313
       aws_default_region: eu-central-1
+      aws_role_arn: arn:aws:iam::244531986313:role/gh_base_infra
+      working_directory: ./
+      tf_apply: 'true'
