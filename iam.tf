@@ -111,6 +111,7 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
       "ec2:DescribeFlowLogs",
       "ec2:DescribeNatGateways",
       "ec2:*LaunchTemplate*",
+      "ec2:RunInstances",
       "autoscaling:DescribeAutoScalingGroups",
       "autoscaling:UpdateAutoScalingGroup",
       "autoscaling:DescribeLifecycleHooks",
