@@ -112,6 +112,7 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
       "ec2:DescribeNatGateways",
       "ec2:*LaunchTemplate*",
       "autoscaling:DescribeAutoScalingGroups",
+      "autoscaling:UpdateAutoScalingGroup",
       "autoscaling:DescribeLifecycleHooks",
       "elasticloadbalancing:Describe*",
       "elasticloadbalancing:CreateTargetGroup",
