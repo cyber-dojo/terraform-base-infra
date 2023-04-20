@@ -12,7 +12,7 @@ locals {
 # S3 bucket to store terraform state file
 module "state_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.2.3"
+  version = "3.8.2"
 
   bucket = local.state_bucket_name
   acl    = "private"
@@ -63,7 +63,7 @@ resource "aws_dynamodb_table" "state_lock" {
 # https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html
 module "logging_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.2.3"
+  version = "3.8.2"
 
   bucket = local.logging_bucket_name
   acl    = "log-delivery-write"

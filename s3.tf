@@ -8,7 +8,7 @@ locals {
 # VPC flow logs bucket
 module "vpc_flow_logs_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.2.3"
+  version = "3.8.2"
 
   bucket        = local.vpc_flow_logs_bucket_name
   acl           = "log-delivery-write"
@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "s3_vpc_flow_logs_bucket" {
 # ALB access logs S3 bucket
 module "alb_access_logs_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.2.3"
+  version = "3.8.2"
 
   bucket        = local.access_logs_bucket_name
   acl           = "log-delivery-write"
@@ -108,7 +108,7 @@ module "alb_access_logs_bucket" {
 module "terraform_modules_bucket" {
   count   = var.create_tf_modules_bucket ? 1 : 0
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.2.3"
+  version = "3.8.2"
 
   bucket        = local.terraform_modules_bucket_name
   acl           = "private"

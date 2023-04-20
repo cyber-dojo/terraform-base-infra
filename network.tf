@@ -1,7 +1,7 @@
 # Enable traffic from internet to load balancer
 module "sg_alb" {
   source              = "terraform-aws-modules/security-group/aws"
-  version             = "4.9.0"
+  version             = "4.17.2"
   name                = "${local.project_name}-alb"
   description         = "Security group for ALB"
   vpc_id              = module.vpc.vpc_id
@@ -14,12 +14,14 @@ module "sg_alb" {
 # https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html
 module "alb" {
   source                      = "terraform-aws-modules/alb/aws"
-  version                     = "7.0.0"
+  version                     = "8.6.0"
   name                        = "${local.project_name}-alb"
   load_balancer_type          = "application"
   vpc_id                      = module.vpc.vpc_id
   subnets                     = module.vpc.public_subnets
   security_groups             = [module.sg_alb.security_group_id]
+  create_security_group       = false
+  enable_xff_client_port      = false
   listener_ssl_policy_default = "ELBSecurityPolicy-FS-1-2-2019-08"
   access_logs = {
     bucket  = module.alb_access_logs_bucket.s3_bucket_id

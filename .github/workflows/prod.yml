@@ -8,7 +8,7 @@ on:
 
 jobs:
   prod:
-    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.1
+    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.3
     with:
       aws_region: eu-central-1
       aws_account_id: arn:aws:iam::274425519734:role/gh_base_infra

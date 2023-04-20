@@ -1,6 +1,6 @@
 module "security_group_ecs_instance" {
   source              = "terraform-aws-modules/security-group/aws"
-  version             = "4.8.0"
+  version             = "4.17.2"
   name                = "ecs-instance-${var.ecs_cluster_name}"
   description         = "ECS instance ${var.ecs_cluster_name}"
   vpc_id              = var.vpc_id

@@ -5,7 +5,7 @@ data "aws_availability_zones" "available" {
 # https://docs.aws.amazon.com/vpc/latest/userguide/vpc-getting-started.html
 module "vpc" {
   source                         = "terraform-aws-modules/vpc/aws"
-  version                        = "3.12.0"
+  version                        = "4.0.1"
   name                           = local.project_name
   cidr                           = local.vpc_cidr
   azs                            = slice(data.aws_availability_zones.available.names, 0, tonumber(local.vpc_azs_max))
@@ -18,6 +18,9 @@ module "vpc" {
   single_nat_gateway             = var.vpc_single_nat_gateway
   one_nat_gateway_per_az         = var.vpc_one_nat_gateway_per_az
   manage_default_security_group  = true
+  manage_default_route_table     = false
+  manage_default_network_acl     = false
+  map_public_ip_on_launch        = true
   default_security_group_name    = "default-${local.project_name}"
   default_security_group_ingress = []
   default_security_group_egress  = []
