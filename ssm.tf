@@ -39,3 +39,15 @@ resource "aws_ssm_parameter" "alb_zone_id" {
   type  = "String"
   value = module.alb.lb_zone_id
 }
+
+resource "aws_ssm_parameter" "ecs_exec_logs_bucket_name" {
+  name  = "/ecs/ecs_exec_logs_bucket_name"
+  type  = "String"
+  value = module.ecs_exec_logs_bucket.s3_bucket_id
+}
+
+resource "aws_ssm_parameter" "ecs_exec_kms_key_arn" {
+  name  = "/ecs/ecs_exec_kms_key_arn"
+  type  = "String"
+  value = aws_kms_key.kms_ecs_exec_logs.arn
+}

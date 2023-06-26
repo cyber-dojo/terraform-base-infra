@@ -110,3 +110,11 @@ variable "docker_gc_grace_period_seconds" {
   type    = number
   default = 432000
 }
+
+variable "ecs_exec_kms_key_id" {
+  type = string
+}
+
+variable "ecs_exec_s3_bucket_name" {
+  type = string
+}

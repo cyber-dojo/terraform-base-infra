@@ -142,6 +142,18 @@ resource "aws_ecs_capacity_provider" "this" {
 resource "aws_ecs_cluster" "this" {
   name = var.ecs_cluster_name
   tags = var.tags
+  configuration {
+    execute_command_configuration {
+      kms_key_id = var.ecs_exec_kms_key_id
+      logging    = "OVERRIDE"
+
+      log_configuration {
+        s3_bucket_name               = var.ecs_exec_s3_bucket_name
+        s3_key_prefix                = var.ecs_cluster_name
+        s3_bucket_encryption_enabled = true
+      }
+    }
+  }
 }
 
 resource "aws_ecs_cluster_capacity_providers" "this" {
