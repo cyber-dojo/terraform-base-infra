@@ -217,6 +217,18 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
       "*"
     ]
   }
+  statement {
+    sid    = "KMSread"
+    effect = "Allow"
+    actions = [
+      "kms:Describe*",
+      "kms:List*",
+      "kms:Get*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }
 
 module "oidc_base_infra_role" {
