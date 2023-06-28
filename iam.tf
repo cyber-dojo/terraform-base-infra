@@ -395,6 +395,166 @@ module "oidc_reporter_role" {
   oidc_repos_list   = ["cyber-dojo/kosli-environment-reporter"]
 }
 
+# kosli-envidence-reporter repo
+data "aws_iam_policy_document" "kosli_evidence_reporter" {
+  statement {
+    sid    = "S3Read"
+    effect = "Allow"
+    actions = [
+      "s3:List*",
+      "s3:Describe*",
+      "s3:Get*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "S3StateWrite"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+    resources = [
+      "${module.state_bucket.s3_bucket_arn}/terraform/kosli-evidence-reporter*"
+    ]
+  }
+  statement {
+    sid    = "DynamoDB"
+    effect = "Allow"
+    actions = [
+      "dynamodb:Get*",
+      "dynamodb:Describe*",
+      "dynamodb:List*",
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid = "IAMRO"
+    actions = [
+      "iam:GetGroup",
+      "iam:GetGroupPolicy",
+      "iam:GetInstanceProfile",
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:GetSAMLProvider",
+      "iam:GetUser",
+      "iam:GetUserPolicy",
+      "iam:ListAccessKeys",
+      "iam:ListAttachedGroupPolicies",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListAttachedUserPolicies",
+      "iam:ListEntitiesForPolicy",
+      "iam:ListGroupPolicies",
+      "iam:ListGroupsForUser",
+      "iam:ListInstanceProfileTags",
+      "iam:ListInstanceProfiles",
+      "iam:ListInstanceProfilesForRole",
+      "iam:ListPolicies",
+      "iam:ListPolicyTags",
+      "iam:ListPolicyVersions",
+      "iam:ListRolePolicies",
+      "iam:ListRoleTags",
+      "iam:ListSAMLProviderTags",
+      "iam:ListServiceSpecificCredentials",
+      "iam:ListUserPolicies",
+      "iam:ListUserTags",
+      "iam:PassRole"
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/*"
+    ]
+  }
+  statement {
+    sid    = "Logs"
+    effect = "Allow"
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:ListTagsLogGroup",
+      "logs:CreateLogGroup",
+      "logs:PutRetentionPolicy",
+      "logs:DeleteLogGroup"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "SSM"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:DescribeParameters",
+      "ssm:ListTagsForResource"
+    ]
+    resources = [
+      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:ssm:${data.aws_region.current.name}::parameter/*"
+    ]
+  }
+  statement {
+    sid    = "EventBridge"
+    effect = "Allow"
+    actions = [
+      "events:Get*",
+      "events:Describe*",
+      "events:List*",
+      "events:PutRule"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "Lambdaro"
+    effect = "Allow"
+    actions = [
+      "lambda:Get*",
+      "lambda:List*",
+      "lambda:Describe*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "Lambdawrite"
+    effect = "Allow"
+    actions = [
+      "lambda:RemovePermission",
+      "lambda:UpdateFunctionCode",
+      "lambda:PublishVersion",
+      "lambda:AddPermission"
+    ]
+    resources = [
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:ecs-exec-log-uploader*",
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:ecs-exec-user-data-reporter*"
+    ]
+  }
+}
+
+module "kosli_evidence_reporter_role" {
+  source            = "./oidc_role"
+  role_name         = "kosli-evidence-reporter"
+  oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
+  policy_json       = data.aws_iam_policy_document.kosli_evidence_reporter.json
+  tags              = module.tags.result
+  oidc_repos_list   = ["cyber-dojo/kosli-evidence-reporter"]
+}
+
 # Enable access from terraform-modules repo to upload terraform modules to the s3
 data "aws_iam_policy_document" "gh_actions_terraform_modules" {
   count = var.create_tf_modules_bucket ? 1 : 0
