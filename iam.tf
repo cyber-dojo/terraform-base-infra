@@ -74,6 +74,7 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
       "iam:ListPolicyVersions",
       "iam:ListRolePolicies",
       "iam:ListRoleTags",
+      "iam:ListRoles",
       "iam:ListSAMLProviderTags",
       "iam:ListServiceSpecificCredentials",
       "iam:ListUserPolicies",
