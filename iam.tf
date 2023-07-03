@@ -89,6 +89,7 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/*",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/*",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/*",
       "arn:aws:iam::aws:policy/AdministratorAccess"
     ]
   }
