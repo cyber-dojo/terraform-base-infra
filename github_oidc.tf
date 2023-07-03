@@ -9,8 +9,8 @@
 
 
 resource "aws_iam_openid_connect_provider" "github" {
-  url             = "https://token.actions.githubusercontent.com"
-  client_id_list  = ["sts.amazonaws.com"]
+  url            = "https://token.actions.githubusercontent.com"
+  client_id_list = ["sts.amazonaws.com"]
   # temp fix, https://github.blog/changelog/2023-06-27-github-actions-update-on-oidc-integration-with-aws/
   # thumbprint_list = data.tls_certificate.github_actions_oidc_provider.certificates[0].sha1_fingerprint
   thumbprint_list = distinct(concat(
