@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
     ]
   }
   statement {
-    sid = "IAMRO"
+    sid = "IAM"
     actions = [
       "iam:GetGroup",
       "iam:GetGroupPolicy",
@@ -79,7 +79,8 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
       "iam:ListServiceSpecificCredentials",
       "iam:ListUserPolicies",
       "iam:ListUserTags",
-      "iam:PassRole"
+      "iam:PassRole",
+      "iam:UpdateOpenIDConnectProviderThumbprint"
     ]
     resources = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
