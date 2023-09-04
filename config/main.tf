@@ -63,7 +63,7 @@ module "config_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "3.14.0"
 
-  bucket = local.config_bucket_name
+  bucket                   = local.config_bucket_name
   control_object_ownership = true
   object_ownership         = "ObjectWriter"
 
