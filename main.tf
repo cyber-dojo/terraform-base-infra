@@ -7,6 +7,16 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1"
+}
+
+provider "aws" {
+  alias  = "eu-north-1"
+  region = "eu-north-1"
+}
+
 locals {
   project_name = "cyber-dojo"
   vpn_cidr     = "10.78.0.0/16" # 10.78.0.1 - 10.68.255.254

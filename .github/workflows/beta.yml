@@ -7,14 +7,16 @@ on:
     - cron: '0 6 * * 0' # 06:00 UTC on Sun
 
 jobs:
-  beta:
+  apply:
     permissions:
       id-token: write
       contents: write
-    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.3
+    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.10
     with:
       aws_region: eu-central-1
       aws_default_region: eu-central-1
       aws_role_arn: arn:aws:iam::244531986313:role/gh_base_infra
+      aws_role_duration: 900
       working_directory: ./
       tf_apply: 'true'
+      tf_version: v1.4.5

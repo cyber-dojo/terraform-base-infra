@@ -78,3 +78,9 @@ variable "create_tf_modules_bucket" {
   type    = bool
   default = false
 }
+
+variable "config_record_all_supported" {
+  description = "Specifies whether AWS Config records configuration changes for every supported type of regional resource (which includes any new type that will become supported in the future)."
+  type        = bool
+  default     = true
+}
