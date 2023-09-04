@@ -231,6 +231,18 @@ data "aws_iam_policy_document" "gh_actions_base_infra" {
       "*"
     ]
   }
+  statement {
+    sid    = "ConfigrRO"
+    effect = "Allow"
+    actions = [
+      "config:Get*",
+      "config:List*",
+      "config:Describe*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }
 
 module "oidc_base_infra_role" {
