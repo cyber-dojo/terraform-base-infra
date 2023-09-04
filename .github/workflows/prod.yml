@@ -15,7 +15,7 @@ jobs:
     with:
       aws_region: eu-central-1
       aws_default_region: eu-central-1
-      aws_role_arn: arn:aws:iam::244531986313:role/gh_base_infra
+      aws_role_arn: arn:aws:iam::274425519734:role/gh_base_infra
       aws_role_duration: 900
       working_directory: ./
       tf_apply: 'true'
