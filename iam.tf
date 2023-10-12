@@ -894,3 +894,64 @@ module "oidc_services_role" {
     "cyber-dojo/web"
   ]
 }
+
+# snyk_scans repo
+
+data "aws_iam_policy_document" "gh_actions_snyk_scans" {
+  statement {
+    sid = "ECR"
+    actions = [
+      "ecr:*Images",
+      "ecr:*LifecyclePolicy",
+      "ecr:*Repository",
+      "ecr:*RepositoryPolicy",
+      "ecr:DescribeRepositories",
+      "ecr:ListTagsForResource",
+      "ecr:PutImageScanningConfiguration",
+      "ecr:PutImageTagMutability",
+      "ecr:PutImage",
+      "ecr:TagResource",
+      "ecr:UntagResource",
+      "ecr:BatchGetImage",
+      "ecr:DescribeRepositories",
+      "ecr:InitiateLayerUpload",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:UploadLayerPart",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:CompleteLayerUpload"
+    ]
+    resources = [
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*"
+    ]
+  }
+  statement {
+    sid = "ECRDescribeRegistry"
+    actions = [
+      "ecr:DescribeRegistry"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid = "ECRAuth"
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:GetRegistryPolicy"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+module "oidc_snyk_scans_role" {
+  source            = "./oidc_role"
+  role_name         = "gh_actions_snyk_scans"
+  oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
+  policy_json       = data.aws_iam_policy_document.gh_actions_snyk_scans.json
+  tags              = module.tags.result
+  oidc_repos_list = [
+    "cyber-dojo/snyk_scans"
+  ]
+}
