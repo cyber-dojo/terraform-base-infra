@@ -5,7 +5,7 @@ data "aws_availability_zones" "available" {
 # https://docs.aws.amazon.com/vpc/latest/userguide/vpc-getting-started.html
 module "vpc" {
   source                         = "terraform-aws-modules/vpc/aws"
-  version                        = "4.0.1"
+  version                        = "5.1.2"
   name                           = local.project_name
   cidr                           = local.vpc_cidr
   azs                            = slice(data.aws_availability_zones.available.names, 0, tonumber(local.vpc_azs_max))

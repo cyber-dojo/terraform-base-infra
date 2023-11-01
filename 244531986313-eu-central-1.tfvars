@@ -1,9 +1,10 @@
-env_name                   = "staging"
-vpc_single_nat_gateway     = true
-vpc_one_nat_gateway_per_az = false
-vpc_azs_max                = 2
-ecs_bridge_network_mode    = true
-create_tf_modules_bucket   = true
+env_name                    = "staging"
+vpc_single_nat_gateway      = true
+vpc_one_nat_gateway_per_az  = false
+vpc_azs_max                 = 2
+ecs_bridge_network_mode     = true
+create_tf_modules_bucket    = true
+config_record_all_supported = false
 
 ecs_clusters = {
   app = {

@@ -19,44 +19,44 @@ locals {
   ]
 }
 
-module "config_eu_central_1" {
-  source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/terraform-modules.zip//security/config/v1"
-  name                          = "config-eu-central-1"
-  iam_role_arn                  = module.config_role.iam_role_arn
-  all_supported                 = var.config_record_all_supported
-  include_global_resource_types = false
-  s3_bucket_name                = module.config_bucket.s3_bucket_id
-  resource_types                = var.config_record_all_supported ? [] : local.config_resource_types
-  providers = {
-    aws.this = aws.eu-central-1
-  }
-}
+# module "config_eu_central_1" {
+#   source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/terraform-modules.zip//security/config/v1"
+#   name                          = "config-eu-central-1"
+#   iam_role_arn                  = module.config_role.iam_role_arn
+#   all_supported                 = var.config_record_all_supported
+#   include_global_resource_types = false
+#   s3_bucket_name                = module.config_bucket.s3_bucket_id
+#   resource_types                = var.config_record_all_supported ? [] : local.config_resource_types
+#   providers = {
+#     aws.this = aws.eu-central-1
+#   }
+# }
 
-module "config_us_east_1" {
-  source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/terraform-modules.zip//security/config/v1"
-  name                          = "config-us-east-1"
-  iam_role_arn                  = module.config_role.iam_role_arn
-  all_supported                 = var.config_record_all_supported
-  include_global_resource_types = false
-  s3_bucket_name                = module.config_bucket.s3_bucket_id
-  resource_types                = var.config_record_all_supported ? [] : local.config_resource_types
-  providers = {
-    aws.this = aws.us-east-1
-  }
-}
+# module "config_us_east_1" {
+#   source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/terraform-modules.zip//security/config/v1"
+#   name                          = "config-us-east-1"
+#   iam_role_arn                  = module.config_role.iam_role_arn
+#   all_supported                 = var.config_record_all_supported
+#   include_global_resource_types = false
+#   s3_bucket_name                = module.config_bucket.s3_bucket_id
+#   resource_types                = var.config_record_all_supported ? [] : local.config_resource_types
+#   providers = {
+#     aws.this = aws.us-east-1
+#   }
+# }
 
-module "config_eu_north_1" {
-  source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/terraform-modules.zip//security/config/v1"
-  name                          = "config-eu-north-1"
-  iam_role_arn                  = module.config_role.iam_role_arn
-  all_supported                 = var.config_record_all_supported
-  include_global_resource_types = false
-  s3_bucket_name                = module.config_bucket.s3_bucket_id
-  resource_types                = var.config_record_all_supported ? [] : local.config_resource_types
-  providers = {
-    aws.this = aws.eu-north-1
-  }
-}
+# module "config_eu_north_1" {
+#   source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/terraform-modules.zip//security/config/v1"
+#   name                          = "config-eu-north-1"
+#   iam_role_arn                  = module.config_role.iam_role_arn
+#   all_supported                 = var.config_record_all_supported
+#   include_global_resource_types = false
+#   s3_bucket_name                = module.config_bucket.s3_bucket_id
+#   resource_types                = var.config_record_all_supported ? [] : local.config_resource_types
+#   providers = {
+#     aws.this = aws.eu-north-1
+#   }
+# }
 
 # S3 bucket used to store the configuration history
 module "config_bucket" {
@@ -162,5 +162,50 @@ module "config_role" {
 
   providers = {
     aws = aws.eu-central-1
+  }
+}
+
+module "config_us_east_1" {
+  source       = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//security/config/v2"
+  name         = "config-us-east-1"
+  iam_role_arn = module.config_role.iam_role_arn
+
+  include_global_resource_types = true
+
+  s3_bucket_name = module.config_bucket.s3_bucket_id
+  providers = {
+    aws = aws.us-east-1
+  }
+}
+
+module "config_eu_central_1" {
+  source       = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//security/config/v2"
+  name         = "config-eu-central-1"
+  iam_role_arn = module.config_role.iam_role_arn
+
+  excludes = {
+    vpc_ec2_eni      = var.config_record_all_supported ? false : true
+    config_resources = var.config_record_all_supported ? false : true
+  }
+
+  s3_bucket_name = module.config_bucket.s3_bucket_id
+  providers = {
+    aws = aws.eu-central-1
+  }
+}
+
+module "config_eu_north_1" {
+  source       = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//security/config/v2"
+  name         = "config-eu-north-1"
+  iam_role_arn = module.config_role.iam_role_arn
+
+  excludes = {
+    vpc_ec2_eni      = var.config_record_all_supported ? false : true
+    config_resources = var.config_record_all_supported ? false : true
+  }
+
+  s3_bucket_name = module.config_bucket.s3_bucket_id
+  providers = {
+    aws = aws.eu-north-1
   }
 }
