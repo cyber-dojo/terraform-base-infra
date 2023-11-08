@@ -638,7 +638,8 @@ data "aws_iam_policy_document" "gh_actions_services" {
       "${module.state_bucket.s3_bucket_arn}/terraform/runner*",
       "${module.state_bucket.s3_bucket_arn}/terraform/saver*",
       "${module.state_bucket.s3_bucket_arn}/terraform/shas*",
-      "${module.state_bucket.s3_bucket_arn}/terraform/web*"
+      "${module.state_bucket.s3_bucket_arn}/terraform/web*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/version-reporter*"
     ]
   }
   statement {
@@ -688,18 +689,7 @@ data "aws_iam_policy_document" "gh_actions_services" {
       "ecr:CompleteLayerUpload"
     ]
     resources = [
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/creator",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/custom-start-points",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/dashboard",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/differ",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/exercises-start-points",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/languages-start-points",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/nginx",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/repler",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/runner",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/saver",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/shas",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/web"
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*"
     ]
   }
   statement {
@@ -891,7 +881,8 @@ module "oidc_services_role" {
     "cyber-dojo/runner",
     "cyber-dojo/saver",
     "cyber-dojo/shas",
-    "cyber-dojo/web"
+    "cyber-dojo/web",
+    "cyber-dojo/version-reporter"
   ]
 }
 
