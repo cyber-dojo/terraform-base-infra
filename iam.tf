@@ -814,8 +814,7 @@ data "aws_iam_policy_document" "gh_actions_services" {
     sid    = "ec2"
     effect = "Allow"
     actions = [
-      "ec2:DescribeRegions",
-      "ec2:DescribeAccountAttributes",
+      "ec2:Describe*",
       "ec2:GetEbsEncryptionByDefault",
       "ec2:DescribeVpcAttribute",
       "ec2:DescribeVpcs",
