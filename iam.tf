@@ -17,7 +17,8 @@ module "terraform_base_infra_policy" {
     "service_discovery_read",
     "rds_read",
     "config_read",
-    "kms_read"
+    "kms_read",
+    "dlm_read"
   ]
 }
 
