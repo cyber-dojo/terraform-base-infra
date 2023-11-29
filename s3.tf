@@ -105,6 +105,7 @@ module "alb_access_logs_bucket" {
 }
 
 # S3 for terraform modules
+# TODO: remove terraform-modules bucket, switch all Cyber-dojo modules to the Kosli terraform-modules bucket
 module "terraform_modules_bucket" {
   count   = var.create_tf_modules_bucket ? 1 : 0
   source  = "terraform-aws-modules/s3-bucket/aws"

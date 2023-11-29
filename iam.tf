@@ -34,7 +34,19 @@ module "oidc_base_infra_role" {
 }
 
 # Enable access from merkely-environment-reporter repo to deploy Kosli reporters
-data "aws_iam_policy_document" "gh_actions_reporter" {
+module "kosli_environment_reporter_policy" {
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  create_policy = false
+  allowed_actions = [
+    "iam_read",
+    "ssm_read",
+    "logs_write",
+    "lambda_read",
+    "eventbridge_write"
+  ]
+}
+
+data "aws_iam_policy_document" "kosli_environment_reporter_additional_policy" {
   statement {
     sid    = "S3ListBuckets"
     effect = "Allow"
@@ -81,102 +93,6 @@ data "aws_iam_policy_document" "gh_actions_reporter" {
     ]
   }
   statement {
-    sid = "IAMRO"
-    actions = [
-      "iam:GetGroup",
-      "iam:GetGroupPolicy",
-      "iam:GetInstanceProfile",
-      "iam:GetPolicy",
-      "iam:GetPolicyVersion",
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:GetSAMLProvider",
-      "iam:GetUser",
-      "iam:GetUserPolicy",
-      "iam:ListAccessKeys",
-      "iam:ListAttachedGroupPolicies",
-      "iam:ListAttachedRolePolicies",
-      "iam:ListAttachedUserPolicies",
-      "iam:ListEntitiesForPolicy",
-      "iam:ListGroupPolicies",
-      "iam:ListGroupsForUser",
-      "iam:ListInstanceProfileTags",
-      "iam:ListInstanceProfiles",
-      "iam:ListInstanceProfilesForRole",
-      "iam:ListPolicies",
-      "iam:ListPolicyTags",
-      "iam:ListPolicyVersions",
-      "iam:ListRolePolicies",
-      "iam:ListRoleTags",
-      "iam:ListSAMLProviderTags",
-      "iam:ListServiceSpecificCredentials",
-      "iam:ListUserPolicies",
-      "iam:ListUserTags",
-      "iam:PassRole"
-    ]
-    resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/*"
-    ]
-  }
-  statement {
-    sid    = "Logs"
-    effect = "Allow"
-    actions = [
-      "logs:DescribeLogGroups",
-      "logs:ListTagsLogGroup",
-      "logs:CreateLogGroup",
-      "logs:PutRetentionPolicy",
-      "logs:DeleteLogGroup"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "SSM"
-    effect = "Allow"
-    actions = [
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "ssm:DescribeParameters",
-      "ssm:ListTagsForResource"
-    ]
-    resources = [
-      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
-      "arn:aws:ssm:${data.aws_region.current.name}::parameter/*"
-    ]
-  }
-  statement {
-    sid    = "EventBridge"
-    effect = "Allow"
-    actions = [
-      "events:Get*",
-      "events:Describe*",
-      "events:List*",
-      "events:PutRule"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "Lambdaro"
-    effect = "Allow"
-    actions = [
-      "lambda:Get*",
-      "lambda:List*",
-      "lambda:Describe*"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
     sid    = "Lambdawrite"
     effect = "Allow"
     actions = [
@@ -192,29 +108,33 @@ data "aws_iam_policy_document" "gh_actions_reporter" {
   }
 }
 
-module "oidc_reporter_role" {
-  source            = "./oidc_role"
+module "oidc_kosli_environment_reporter_role" {
+  source            = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v4"
   role_name         = "gh_actions_reporter"
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
-  policy_json       = data.aws_iam_policy_document.gh_actions_reporter.json
-  tags              = module.tags.result
   oidc_repos_list   = ["cyber-dojo/kosli-environment-reporter"]
+  oidc_policies_list = [
+    module.kosli_environment_reporter_policy.policy_document_json,
+    data.aws_iam_policy_document.kosli_environment_reporter_additional_policy.json
+  ]
+  tags = module.tags.result
 }
 
 # kosli-envidence-reporter repo
-data "aws_iam_policy_document" "kosli_evidence_reporter" {
-  statement {
-    sid    = "S3Read"
-    effect = "Allow"
-    actions = [
-      "s3:List*",
-      "s3:Describe*",
-      "s3:Get*"
-    ]
-    resources = [
-      "*"
-    ]
-  }
+module "kosli_evidence_reporter_policy" {
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  create_policy = false
+  allowed_actions = [
+    "s3_read",
+    "iam_read",
+    "ssm_read",
+    "logs_write",
+    "lambda_read",
+    "eventbridge_write"
+  ]
+}
+
+data "aws_iam_policy_document" "kosli_evidence_reporter_additional_policy" {
   statement {
     sid    = "S3StateWrite"
     effect = "Allow"
@@ -241,102 +161,6 @@ data "aws_iam_policy_document" "kosli_evidence_reporter" {
     ]
   }
   statement {
-    sid = "IAMRO"
-    actions = [
-      "iam:GetGroup",
-      "iam:GetGroupPolicy",
-      "iam:GetInstanceProfile",
-      "iam:GetPolicy",
-      "iam:GetPolicyVersion",
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:GetSAMLProvider",
-      "iam:GetUser",
-      "iam:GetUserPolicy",
-      "iam:ListAccessKeys",
-      "iam:ListAttachedGroupPolicies",
-      "iam:ListAttachedRolePolicies",
-      "iam:ListAttachedUserPolicies",
-      "iam:ListEntitiesForPolicy",
-      "iam:ListGroupPolicies",
-      "iam:ListGroupsForUser",
-      "iam:ListInstanceProfileTags",
-      "iam:ListInstanceProfiles",
-      "iam:ListInstanceProfilesForRole",
-      "iam:ListPolicies",
-      "iam:ListPolicyTags",
-      "iam:ListPolicyVersions",
-      "iam:ListRolePolicies",
-      "iam:ListRoleTags",
-      "iam:ListSAMLProviderTags",
-      "iam:ListServiceSpecificCredentials",
-      "iam:ListUserPolicies",
-      "iam:ListUserTags",
-      "iam:PassRole"
-    ]
-    resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/*"
-    ]
-  }
-  statement {
-    sid    = "Logs"
-    effect = "Allow"
-    actions = [
-      "logs:DescribeLogGroups",
-      "logs:ListTagsLogGroup",
-      "logs:CreateLogGroup",
-      "logs:PutRetentionPolicy",
-      "logs:DeleteLogGroup"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "SSM"
-    effect = "Allow"
-    actions = [
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "ssm:DescribeParameters",
-      "ssm:ListTagsForResource"
-    ]
-    resources = [
-      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
-      "arn:aws:ssm:${data.aws_region.current.name}::parameter/*"
-    ]
-  }
-  statement {
-    sid    = "EventBridge"
-    effect = "Allow"
-    actions = [
-      "events:Get*",
-      "events:Describe*",
-      "events:List*",
-      "events:PutRule"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "Lambdaro"
-    effect = "Allow"
-    actions = [
-      "lambda:Get*",
-      "lambda:List*",
-      "lambda:Describe*"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
     sid    = "Lambdawrite"
     effect = "Allow"
     actions = [
@@ -352,16 +176,20 @@ data "aws_iam_policy_document" "kosli_evidence_reporter" {
   }
 }
 
-module "kosli_evidence_reporter_role" {
-  source            = "./oidc_role"
+module "oidc_kosli_evidence_reporter_role" {
+  source            = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v4"
   role_name         = "kosli-evidence-reporter"
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
-  policy_json       = data.aws_iam_policy_document.kosli_evidence_reporter.json
-  tags              = module.tags.result
   oidc_repos_list   = ["cyber-dojo/kosli-evidence-reporter"]
+  oidc_policies_list = [
+    module.kosli_evidence_reporter_policy.policy_document_json,
+    data.aws_iam_policy_document.kosli_evidence_reporter_additional_policy.json
+  ]
+  tags = module.tags.result
 }
 
 # Enable access from terraform-modules repo to upload terraform modules to the s3
+
 data "aws_iam_policy_document" "gh_actions_terraform_modules" {
   count = var.create_tf_modules_bucket ? 1 : 0
   statement {
@@ -378,16 +206,35 @@ data "aws_iam_policy_document" "gh_actions_terraform_modules" {
 
 module "oidc_terraform_modules_role" {
   count             = var.create_tf_modules_bucket ? 1 : 0
-  source            = "./oidc_role"
+  source            = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v4"
   role_name         = "gh_actions_terraform_modules"
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
-  policy_json       = data.aws_iam_policy_document.gh_actions_terraform_modules[0].json
-  tags              = module.tags.result
-  oidc_repos_list   = ["cyber-dojo/terraform-modules"]
+  oidc_policies_list = [
+    data.aws_iam_policy_document.gh_actions_terraform_modules[0].json
+  ]
+  tags            = module.tags.result
+  oidc_repos_list = ["cyber-dojo/terraform-modules"]
 }
 
 # Enable services deployment for the services repositories
-data "aws_iam_policy_document" "gh_actions_services" {
+module "oidc_services_policy" {
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  create_policy = false
+  allowed_actions = [
+    "ecr_push",
+    "ecr_pull",
+    "ecr_read",
+    "service_discovery_read",
+    "ecs_write",
+    "ec2",
+    "acm_read",
+    "iam_read",
+    "ssm_read",
+    "logs_write"
+  ]
+}
+
+data "aws_iam_policy_document" "oidc_services_additional_policy" {
   statement {
     sid    = "S3ListBuckets"
     effect = "Allow"
@@ -445,208 +292,12 @@ data "aws_iam_policy_document" "gh_actions_services" {
       "*"
     ]
   }
-  statement {
-    sid = "ECR"
-    actions = [
-      "ecr:*Images",
-      "ecr:*LifecyclePolicy",
-      "ecr:*Repository",
-      "ecr:*RepositoryPolicy",
-      "ecr:DescribeRepositories",
-      "ecr:ListTagsForResource",
-      "ecr:PutImageScanningConfiguration",
-      "ecr:PutImageTagMutability",
-      "ecr:PutImage",
-      "ecr:TagResource",
-      "ecr:UntagResource",
-      "ecr:BatchGetImage",
-      "ecr:DescribeRepositories",
-      "ecr:InitiateLayerUpload",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:UploadLayerPart",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:CompleteLayerUpload"
-    ]
-    resources = [
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*"
-    ]
-  }
-  statement {
-    sid = "ECRDescribeRegistry"
-    actions = [
-      "ecr:DescribeRegistry"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid = "ECRAuth"
-    actions = [
-      "ecr:GetAuthorizationToken",
-      "ecr:GetRegistryPolicy"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "Logs"
-    effect = "Allow"
-    actions = [
-      "logs:DescribeLogGroups",
-      "logs:ListTagsLogGroup",
-      "logs:CreateLogGroup",
-      "logs:PutRetentionPolicy",
-      "logs:DeleteLogGroup"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "SSM"
-    effect = "Allow"
-    actions = [
-      "ssm:GetParameter",
-      "ssm:GetParameters",
-      "ssm:DescribeParameters",
-      "ssm:ListTagsForResource"
-    ]
-    resources = [
-      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
-      "arn:aws:ssm:${data.aws_region.current.name}::parameter/*"
-    ]
-  }
-  statement {
-    sid    = "servicediscovery"
-    effect = "Allow"
-    actions = [
-      "servicediscovery:GetNamespace",
-      "servicediscovery:ListNamespaces",
-      "servicediscovery:ListTagsForResource",
-      "servicediscovery:GetService"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid = "IAMRO"
-    actions = [
-      "iam:GetGroup",
-      "iam:GetGroupPolicy",
-      "iam:GetInstanceProfile",
-      "iam:GetPolicy",
-      "iam:GetPolicyVersion",
-      "iam:GetRole",
-      "iam:GetRolePolicy",
-      "iam:GetSAMLProvider",
-      "iam:GetUser",
-      "iam:GetUserPolicy",
-      "iam:ListAccessKeys",
-      "iam:ListAttachedGroupPolicies",
-      "iam:ListAttachedRolePolicies",
-      "iam:ListAttachedUserPolicies",
-      "iam:ListEntitiesForPolicy",
-      "iam:ListGroupPolicies",
-      "iam:ListGroupsForUser",
-      "iam:ListInstanceProfileTags",
-      "iam:ListInstanceProfiles",
-      "iam:ListInstanceProfilesForRole",
-      "iam:ListPolicies",
-      "iam:ListPolicyTags",
-      "iam:ListPolicyVersions",
-      "iam:ListRolePolicies",
-      "iam:ListRoleTags",
-      "iam:ListSAMLProviderTags",
-      "iam:ListServiceSpecificCredentials",
-      "iam:ListUserPolicies",
-      "iam:ListUserTags",
-      "iam:PassRole"
-    ]
-    resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/*",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/*"
-    ]
-  }
-  statement {
-    sid    = "ecs"
-    effect = "Allow"
-    actions = [
-      "ecs:Describe*",
-      "ecs:RegisterTaskDefinition",
-      "ecs:DeregisterTaskDefinition",
-      "ecs:CreateService",
-      "ecs:UpdateService",
-      "ecs:DeleteService"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "ec2"
-    effect = "Allow"
-    actions = [
-      "ec2:Describe*",
-      "ec2:GetEbsEncryptionByDefault",
-      "ec2:DescribeVpcAttribute",
-      "ec2:DescribeVpcs",
-      "ec2:DescribeAvailabilityZones",
-      "ec2:DescribeSpotPriceHistory",
-      "ec2:DescribeAddresses",
-      "ec2:DescribeSecurityGroups",
-      "ec2:DescribeSubnets",
-      "ec2:DescribeRouteTables",
-      "ec2:DescribeNetworkAcls",
-      "ec2:DescribeInternetGateways",
-      "ec2:DescribeFlowLogs",
-      "ec2:DescribeNatGateways",
-      "ec2:DescribeLaunchTemplates",
-      "ec2:DescribeLaunchTemplateVersions",
-      "autoscaling:DescribeAutoScalingGroups",
-      "autoscaling:DescribeLifecycleHooks",
-      "elasticloadbalancing:Describe*",
-      "elasticloadbalancing:CreateTargetGroup",
-      "elasticloadbalancing:ModifyTargetGroupAttributes",
-      "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:CreateRule",
-      "elasticloadbalancing:DeleteRule"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid    = "ACM"
-    effect = "Allow"
-    actions = [
-      "acm:DescribeCertificate",
-      "acm:ListTagsForCertificate"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-}
-
-resource "aws_iam_policy" "gh_actions_services" {
-  name        = "services"
-  description = "services"
-  policy      = data.aws_iam_policy_document.gh_actions_services.json
 }
 
 module "oidc_services_role" {
-  source            = "./oidc_role"
+  source            = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v4"
   role_name         = "gh_actions_services"
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
-  policy_json       = data.aws_iam_policy_document.gh_actions_services.json
-  tags              = module.tags.result
   oidc_repos_list = [
     "cyber-dojo/creator",
     "cyber-dojo/custom-start-points",
@@ -662,65 +313,34 @@ module "oidc_services_role" {
     "cyber-dojo/web",
     "cyber-dojo/version-reporter"
   ]
+  oidc_policies_list = [
+    module.oidc_services_policy.policy_document_json,
+    data.aws_iam_policy_document.oidc_services_additional_policy.json
+  ]
+  tags = module.tags.result
 }
 
 # snyk_scans repo
 
-data "aws_iam_policy_document" "gh_actions_snyk_scans" {
-  statement {
-    sid = "ECR"
-    actions = [
-      "ecr:*Images",
-      "ecr:*LifecyclePolicy",
-      "ecr:*Repository",
-      "ecr:*RepositoryPolicy",
-      "ecr:DescribeRepositories",
-      "ecr:ListTagsForResource",
-      "ecr:PutImageScanningConfiguration",
-      "ecr:PutImageTagMutability",
-      "ecr:PutImage",
-      "ecr:TagResource",
-      "ecr:UntagResource",
-      "ecr:BatchGetImage",
-      "ecr:DescribeRepositories",
-      "ecr:InitiateLayerUpload",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:UploadLayerPart",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:CompleteLayerUpload"
-    ]
-    resources = [
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*"
-    ]
-  }
-  statement {
-    sid = "ECRDescribeRegistry"
-    actions = [
-      "ecr:DescribeRegistry"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-    sid = "ECRAuth"
-    actions = [
-      "ecr:GetAuthorizationToken",
-      "ecr:GetRegistryPolicy"
-    ]
-    resources = [
-      "*"
-    ]
-  }
+module "oidc_snyk_scans_policy" {
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  create_policy = false
+  allowed_actions = [
+    "ecr_push",
+    "ecr_pull",
+    "ecr_read"
+  ]
 }
 
 module "oidc_snyk_scans_role" {
-  source            = "./oidc_role"
+  source            = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v4"
   role_name         = "gh_actions_snyk_scans"
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
-  policy_json       = data.aws_iam_policy_document.gh_actions_snyk_scans.json
-  tags              = module.tags.result
   oidc_repos_list = [
     "cyber-dojo/snyk_scans"
   ]
+  oidc_policies_list = [
+    module.oidc_snyk_scans_policy.policy_document_json
+  ]
+  tags = module.tags.result
 }
