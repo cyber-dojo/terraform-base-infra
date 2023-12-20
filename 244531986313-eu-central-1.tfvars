@@ -5,6 +5,7 @@ vpc_azs_max                 = 2
 ecs_bridge_network_mode     = true
 create_tf_modules_bucket    = true
 config_record_all_supported = false
+ebs_root_size               = 50
 
 ecs_clusters = {
   app = {
