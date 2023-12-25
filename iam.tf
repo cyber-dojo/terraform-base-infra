@@ -10,6 +10,7 @@ module "terraform_base_infra_policy" {
     "acm_read",
     "iam_read",
     "ec2",
+    "launch_template_update",
     "ecs_write",
     "ssm_read",
     "s3_read",
