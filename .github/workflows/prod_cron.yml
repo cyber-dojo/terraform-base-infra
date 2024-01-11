@@ -1,8 +1,6 @@
-name: 'prod'
+name: 'prod cron job'
 
 on:
-  push:
-    branches: [ prod ]
   schedule:
     - cron: '0 6 * * 0' # 06:00 UTC on Sun
 

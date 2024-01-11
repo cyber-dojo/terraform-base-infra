@@ -1,0 +1,11 @@
+version: 1
+trail:
+  attestations:
+  - name: tf-plan
+    type: generic
+  - name: tf-apply-plan
+    type: generic
+  - name: pull-request
+    type: pull_request
+  - name: tf-validation
+    type: generic
