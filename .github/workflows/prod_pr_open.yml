@@ -8,13 +8,11 @@ concurrency:
   group: ${{ github.workflow }} 
 
 env:
-  KOSLI_ORG: cyber-dojo-trails
+  KOSLI_CLI_VERSION: "2.7.1"
+  KOSLI_ORG: "cyber-dojo-trails"
   KOSLI_FLOW: "terraform-base-infra-prs"
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
-  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS }}
-  KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
   KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
-  KOSLI_CLI_VERSION: "2.7.1"
 
 jobs:
   begin-trail:
@@ -22,7 +20,23 @@ jobs:
     permissions:
       id-token: write
       contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        kosli_env: [kosli-prod, kosli-staging]
+        include:
+          - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
+            kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
+            kosli_env: kosli-prod
+          - kosli_host: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
+            kosli_api_token: "KOSLI_API_TOKEN_TRAILS_STAGING"
+            kosli_env: kosli-staging
     steps:
+      - name: Prepare env vars
+        run: |
+          echo "KOSLI_HOST=${{ matrix.kosli_host}}" >> ${GITHUB_ENV}
+          echo "KOSLI_API_TOKEN=${{ secrets[matrix.kosli_api_token] }}" >> ${GITHUB_ENV}
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -37,12 +51,16 @@ jobs:
           kosli create flow ${{ env.KOSLI_FLOW }} 
             --template-file kosli-trail-template.yml 
             --description "Kosli flow to track terraform PRs for base infra"
+            --host ${{ env.KOSLI_HOST}}
+            --api-token ${{ env.KOSLI_API_TOKEN }}
 
       - name: Create Kosli trail for terraform-base-infra PRs
         run:
           kosli begin trail ${{ env.KOSLI_TRAIL }}
             --flow ${{ env.KOSLI_FLOW }} 
             --template-file kosli-trail-template.yml
+            --host ${{ env.KOSLI_HOST}}
+            --api-token ${{ env.KOSLI_API_TOKEN }}
 
       # AWS credentials for terraform validation
       - name: Configure AWS credentials
@@ -80,6 +98,8 @@ jobs:
             --trail ${{ env.KOSLI_TRAIL }}
             --evidence-paths ./validation_results.json
             --compliant ${{ env.KOSLI_TF_VALIDATION_COMLIANT }}
+            --host ${{ env.KOSLI_HOST}}
+            --api-token ${{ env.KOSLI_API_TOKEN }}
 
   plan:
     permissions:
@@ -100,10 +120,23 @@ jobs:
   trail-attest-tf-plan:
     needs: [ begin-trail, plan ]
     runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        kosli_env: [kosli-prod, kosli-staging]
+        include:
+          - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
+            kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
+            kosli_env: kosli-prod
+          - kosli_host: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
+            kosli_api_token: "KOSLI_API_TOKEN_TRAILS_STAGING"
+            kosli_env: kosli-staging
     steps:
+      - name: Prepare env vars
+        run: |
+          echo "KOSLI_HOST=${{ matrix.kosli_host}}" >> ${GITHUB_ENV}
+          echo "KOSLI_API_TOKEN=${{ secrets[matrix.kosli_api_token] }}" >> ${GITHUB_ENV}
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -125,7 +158,16 @@ jobs:
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
             --evidence-paths ./plan.tfplan
-      
+            --host ${{ env.KOSLI_HOST}}
+            --api-token ${{ env.KOSLI_API_TOKEN }}
+
+  cleanup-workflow-artifacts:
+    needs: [ trail-attest-tf-plan ]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
       - name: Delete tf plan artifact
         run: |
           # Get the list of artifacts
