@@ -1,0 +1,117 @@
+name: 'prod-pr-merged'
+
+on:
+  pull_request:
+    branches: [ prod ]
+    types: [ closed ]
+
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  KOSLI_CLI_VERSION: "2.7.1"
+  KOSLI_ORG: "cyber-dojo-trails"
+  KOSLI_FLOW: "terraform-base-infra-prs"
+  KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
+  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+
+jobs:
+  apply:
+    if: github.event.pull_request.merged == true
+    permissions:
+      id-token: write
+      contents: write
+    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.15
+    with:
+      aws_region: eu-central-1
+      aws_default_region: eu-central-1
+      aws_role_arn: arn:aws:iam::274425519734:role/gh_base_infra
+      aws_role_duration: 900
+      working_directory: ./
+      tf_apply: 'true'
+      tf_version: v1.4.5
+      tf_upload_artifacts: 'true'
+      tf_upload_artifact_path: "./plan.tfplan"
+
+  kosli-attestations:
+    needs: apply
+    if: github.event.pull_request.merged == true
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kosli_env: [kosli-prod, kosli-staging]
+        include:
+          - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
+            kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
+            kosli_env: kosli-prod
+          - kosli_host: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
+            kosli_api_token: "KOSLI_API_TOKEN_TRAILS_STAGING"
+            kosli_env: kosli-staging
+    steps:
+      - name: Prepare env vars
+        run: |
+          echo "KOSLI_HOST=${{ matrix.kosli_host}}" >> ${GITHUB_ENV}
+          echo "KOSLI_API_TOKEN=${{ secrets[matrix.kosli_api_token] }}" >> ${GITHUB_ENV}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup kosli cli
+        uses: kosli-dev/setup-cli-action@v2
+        with:
+          version:
+            ${{ env.KOSLI_CLI_VERSION }}
+
+      - name: Download a single artifact
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: tf_artifacts
+      
+      - name: Attest tf plan to Kosli trail
+        run:
+          kosli attest generic
+            --name tf-apply-plan
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
+            --evidence-paths ./plan.tfplan
+            --host ${{ env.KOSLI_HOST}}
+            --api-token ${{ env.KOSLI_API_TOKEN }}
+
+      - name: Attest PR to Kosli trail
+        run:
+          kosli attest pr github
+            --name pull-request
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
+            --github-token ${{ secrets.GITHUB_TOKEN }}
+            --host ${{ env.KOSLI_HOST}}
+            --api-token ${{ env.KOSLI_API_TOKEN }}
+
+  cleanup-workflow-artifacts:
+    needs: [ kosli-attestations ]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Delete tf plan artifact
+        run: |
+          # Get the list of artifacts
+          artifact_id=$(curl -s -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository}}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name == "tf_artifacts").id')
+
+          # Delete each artifact
+          curl -L \
+            -X DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository}}/actions/artifacts/${artifact_id}
