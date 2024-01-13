@@ -8,9 +8,9 @@ concurrency:
   group: ${{ github.workflow }} 
 
 env:
-  KOSLI_CLI_VERSION: "2.7.1"
-  KOSLI_ORG: "cyber-dojo-trails"
-  KOSLI_FLOW: "terraform-base-infra-prs"
+  KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
+  KOSLI_ORG: cyber-dojo-trails
+  KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
   KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
 
@@ -40,7 +40,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup kosli cli
+      - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
           version:
@@ -62,8 +62,7 @@ jobs:
             --host ${{ env.KOSLI_HOST}}
             --api-token ${{ env.KOSLI_API_TOKEN }}
 
-      # AWS credentials for terraform validation
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials for terraform validation
         id: configure-aws-creds
         uses: aws-actions/configure-aws-credentials@v4.0.1
         with:
@@ -73,24 +72,21 @@ jobs:
           role-session-name: ${{ github.event.repository.name }}
           mask-aws-account-id: 'no'
 
-      # Install terraform
-      - name: setup terraform
+      - name: Setup terraform
         uses: hashicorp/setup-terraform@v2.0.3
         with:
           terraform_version: v1.4.5
           terraform_wrapper: false
 
-      # Initialize
-      - name: terraform init
+      - name: Terraform init
         run: terraform init -backend=false
 
-      # Validate
-      - name: terraform validate
+      - name: Terraform validate
         run: |
           terraform validate -json > validation_results.json
           echo "KOSLI_TF_VALIDATION_COMLIANT=$(jq -r '.valid' ./validation_results.json)" >> ${GITHUB_ENV}
 
-      - name: Attest tf validation results
+      - name: Attest terraform validation results to Kosli trail
         run:
           kosli attest generic
             --name tf-validation

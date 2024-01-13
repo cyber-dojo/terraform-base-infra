@@ -9,9 +9,9 @@ concurrency:
   group: ${{ github.workflow }}
 
 env:
-  KOSLI_CLI_VERSION: "2.7.1"
-  KOSLI_ORG: "cyber-dojo-trails"
-  KOSLI_FLOW: "terraform-base-infra-prs"
+  KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
+  KOSLI_ORG: cyber-dojo-trails
+  KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
   KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
 
@@ -61,7 +61,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup kosli cli
+      - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
           version:
@@ -72,7 +72,7 @@ jobs:
         with:
           name: tf_artifacts
       
-      - name: Attest tf plan to Kosli trail
+      - name: Attest terraform plan to Kosli trail
         run:
           kosli attest generic
             --name tf-apply-plan
@@ -99,7 +99,7 @@ jobs:
       actions: write
       contents: read
     steps:
-      - name: Delete tf plan artifact
+      - name: Delete terraform plan artifact
         run: |
           # Get the list of artifacts
           artifact_id=$(curl -s -L \
