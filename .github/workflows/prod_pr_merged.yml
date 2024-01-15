@@ -12,6 +12,10 @@ env:
   KOSLI_ORG: cyber-dojo-trails
   KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
+  KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
+  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS }}
+  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
 
 jobs:
   apply:
@@ -39,21 +43,6 @@ jobs:
       contents: read
       pull-requests: read
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        kosli_env: [kosli-prod, kosli-staging]
-        include:
-          - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-            kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
-            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
-            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
-            kosli_env: kosli-prod
-          - kosli_host: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
-            kosli_api_token: "KOSLI_API_TOKEN_TRAILS_STAGING"
-            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
-            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
-            kosli_env: kosli-staging
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,7 +50,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ matrix.kosli_cli_version }}
+          version: ${{ env.KOSLI_CLI_VERSION}}
 
       - name: Download a single artifact
         uses: actions/download-artifact@v4.1.1
@@ -75,9 +64,6 @@ jobs:
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
             --evidence-paths ./plan.tfplan
-            --host ${{ matrix.kosli_host }}
-            --api-token ${{ secrets[matrix.kosli_api_token] }}
-            --dry-run ${{ matrix.kosli_dry_run }}
 
       - name: Attest PR to Kosli trail
         run:
@@ -86,12 +72,10 @@ jobs:
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
             --github-token ${{ secrets.GITHUB_TOKEN }}
-            --host ${{ matrix.kosli_host }}
-            --api-token ${{ secrets[matrix.kosli_api_token] }}
-            --dry-run ${{ matrix.kosli_dry_run }}
 
+  # Cleanup workflow artifacts
   cleanup-workflow-artifacts:
-    needs: [ kosli-attestations ]
+    needs: [ kosli-attestations, kosli-attestations-staging ]
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -113,3 +97,45 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/${{ github.repository}}/actions/artifacts/${artifact_id}
+
+  # Attestations for Kosli staging server
+  kosli-attestations-staging:
+    needs: apply
+    if: github.event.pull_request.merged == true
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: read
+    env:
+      KOSLI_HOST: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
+      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS_STAGING }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Kosli cli
+        uses: kosli-dev/setup-cli-action@v2
+        with:
+          version: ${{ env.KOSLI_CLI_VERSION}}
+
+      - name: Download a single artifact
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: tf_artifacts
+      
+      - name: Attest terraform plan to Kosli trail
+        run:
+          kosli attest generic
+            --name tf-apply-plan
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
+            --evidence-paths ./plan.tfplan
+
+      - name: Attest PR to Kosli trail
+        run:
+          kosli attest pr github
+            --name pull-request
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
+            --github-token ${{ secrets.GITHUB_TOKEN }}

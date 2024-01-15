@@ -11,6 +11,10 @@ env:
   KOSLI_ORG: cyber-dojo-trails
   KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
+  KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
+  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS }}
+  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
 
 jobs:
   begin-trail:
@@ -18,21 +22,6 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        kosli_env: [kosli-prod, kosli-staging]
-        include:
-          - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-            kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
-            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
-            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
-            kosli_env: kosli-prod
-          - kosli_host: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
-            kosli_api_token: "KOSLI_API_TOKEN_TRAILS_STAGING"
-            kosli_env: kosli-staging
-            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
-            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,25 +29,19 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ matrix.kosli_cli_version }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
           kosli create flow ${{ env.KOSLI_FLOW }} 
             --template-file kosli-trail-template.yml 
             --description "Kosli flow to track terraform PRs for base infra"
-            --host ${{ matrix.kosli_host }}
-            --api-token ${{ secrets[matrix.kosli_api_token] }}
-            --dry-run ${{ matrix.kosli_dry_run }}
 
       - name: Create Kosli trail for terraform-base-infra PRs
         run:
           kosli begin trail ${{ env.KOSLI_TRAIL }}
             --flow ${{ env.KOSLI_FLOW }} 
             --template-file kosli-trail-template.yml
-            --host ${{ matrix.kosli_host }}
-            --api-token ${{ secrets[matrix.kosli_api_token] }}
-            --dry-run ${{ matrix.kosli_dry_run }}
 
       - name: Configure AWS credentials for terraform validation
         id: configure-aws-creds
@@ -92,9 +75,12 @@ jobs:
             --trail ${{ env.KOSLI_TRAIL }}
             --evidence-paths ./validation_results.json
             --compliant ${{ env.KOSLI_TF_VALIDATION_COMLIANT }}
-            --host ${{ matrix.kosli_host }}
-            --api-token ${{ secrets[matrix.kosli_api_token] }}
-            --dry-run ${{ matrix.kosli_dry_run }}
+
+      - name: Upload validation results as artifact
+        uses: actions/upload-artifact@v4.0.0
+        with:
+          name: validation_results
+          path: ./validation_results.json
 
   plan:
     permissions:
@@ -113,23 +99,8 @@ jobs:
       tf_upload_artifact_path: "./plan.tfplan"
 
   trail-attest-tf-plan:
-    needs: [ begin-trail, plan ]
+    needs: [  begin-trail, plan ]
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        kosli_env: [kosli-prod, kosli-staging]
-        include:
-          - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
-            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
-            kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
-            kosli_env: kosli-prod
-          - kosli_host: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
-            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
-            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
-            kosli_api_token: "KOSLI_API_TOKEN_TRAILS_STAGING"
-            kosli_env: kosli-staging
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -137,9 +108,9 @@ jobs:
       - name: Setup kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ matrix.kosli_cli_version }}
+          version: ${{ env.KOSLI_CLI_VERSION }}
 
-      - name: Download a single artifact
+      - name: Download terraform plan created in the plan job
         uses: actions/download-artifact@v4.1.1
         with:
           name: tf_artifacts
@@ -151,18 +122,16 @@ jobs:
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
             --evidence-paths ./plan.tfplan
-            --host ${{ matrix.kosli_host }}
-            --api-token ${{ secrets[matrix.kosli_api_token] }}
-            --dry-run ${{ matrix.kosli_dry_run }}
 
+  # Cleanup workflow artifacts
   cleanup-workflow-artifacts:
-    needs: [ trail-attest-tf-plan ]
+    needs: [ trail-attest-tf-plan, trails-reporting-staging ]
     runs-on: ubuntu-latest
     permissions:
       actions: write
       contents: read
     steps:
-      - name: Delete tf plan artifact
+      - name: Delete terraform plan artifact
         run: |
           # Get the list of artifacts
           artifact_id=$(curl -s -L \
@@ -178,3 +147,81 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/${{ github.repository}}/actions/artifacts/${artifact_id}
+        
+      - name: Delete validation_results artifact
+        run: |
+          # Get the list of artifacts
+          artifact_id=$(curl -s -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository}}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name == "validation_results").id')
+
+          # Delete each artifact
+          curl -L \
+            -X DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository}}/actions/artifacts/${artifact_id}
+
+            # Attestations to Kosli staging server
+
+  # Attestations to Kosli staging server
+  trails-reporting-staging:
+    needs: [ trail-attest-tf-plan ]
+    name: Begin Kosli trail for kosli staging
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    env:
+      KOSLI_HOST: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
+      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS_STAGING }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Kosli cli
+        uses: kosli-dev/setup-cli-action@v2
+        with:
+          version: ${{ vars.KOSLI_CLI_VERSION }}
+
+      - name: Create Kosli flow for terraform-base-infra PRs
+        run:
+          kosli create flow ${{ env.KOSLI_FLOW }} 
+            --template-file kosli-trail-template.yml 
+            --description "Kosli flow to track terraform PRs for base infra"
+
+      - name: Create Kosli trail for terraform-base-infra PRs
+        run:
+          kosli begin trail ${{ env.KOSLI_TRAIL }}
+            --flow ${{ env.KOSLI_FLOW }} 
+            --template-file kosli-trail-template.yml
+
+      - name: Download terraform plan created in the plan job
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: validation_results
+
+      - name: Attest terraform validation results to Kosli trail
+        run:
+          kosli attest generic
+            --name tf-validation
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
+            --evidence-paths ./validation_results.json
+            --compliant ${{ env.KOSLI_TF_VALIDATION_COMLIANT }}
+
+      - name: Download terraform plan created in the plan job
+        uses: actions/download-artifact@v4.1.1
+        with:
+          name: tf_artifacts
+
+      - name: Attest tf plan to Kosli trail
+        run:
+          kosli attest generic
+            --name tf-plan
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
+            --evidence-paths ./plan.tfplan
