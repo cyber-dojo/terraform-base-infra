@@ -18,9 +18,6 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    env:
-      KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
-      KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
     strategy:
       fail-fast: false
       matrix:
@@ -40,9 +37,11 @@ jobs:
         uses: kosli-dev/setup-cli-action@v2
         with:
           version:
-            ${{ env.KOSLI_CLI_VERSION }}
+            ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
+        env:
+          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli create flow ${{ env.KOSLI_FLOW }} 
             --template-file kosli-trail-template.yml 
@@ -51,6 +50,8 @@ jobs:
             --api-token ${{ secrets[matrix.kosli_api_token] }}
 
       - name: Create Kosli trail for terraform-base-infra PRs
+        env:
+          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli begin trail ${{ env.KOSLI_TRAIL }}
             --flow ${{ env.KOSLI_FLOW }} 
@@ -83,6 +84,8 @@ jobs:
           echo "KOSLI_TF_VALIDATION_COMLIANT=$(jq -r '.valid' ./validation_results.json)" >> ${GITHUB_ENV}
 
       - name: Attest terraform validation results to Kosli trail
+        env:
+          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli attest generic
             --name tf-validation
@@ -112,9 +115,6 @@ jobs:
   trail-attest-tf-plan:
     needs: [ begin-trail, plan ]
     runs-on: ubuntu-latest
-    env:
-      KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
-      KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
     strategy:
       fail-fast: false
       matrix:
@@ -134,7 +134,7 @@ jobs:
         uses: kosli-dev/setup-cli-action@v2
         with:
           version:
-            ${{ env.KOSLI_CLI_VERSION }}
+            ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Download a single artifact
         uses: actions/download-artifact@v4.1.1
@@ -142,6 +142,8 @@ jobs:
           name: tf_artifacts
       
       - name: Attest tf plan to Kosli trail
+        env:
+          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli attest generic
             --name tf-plan
