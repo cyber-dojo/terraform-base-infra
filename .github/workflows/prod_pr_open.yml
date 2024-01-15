@@ -20,8 +20,8 @@ jobs:
   begin-trail:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: write
+          id-token: write
+          contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ vars.KOSLI_CLI_VERSION }}
+          version: ${{ env.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
@@ -173,8 +173,8 @@ jobs:
     name: Begin Kosli trail for kosli staging
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: write
+          id-token: write
+          contents: write
     env:
       KOSLI_HOST: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
       KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS_STAGING }}
@@ -185,7 +185,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ vars.KOSLI_CLI_VERSION }}
+          version: ${{ env.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
