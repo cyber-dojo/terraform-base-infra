@@ -43,6 +43,8 @@ jobs:
       fail-fast: false
       matrix:
         kosli_env: [kosli-prod, kosli-staging]
+        kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
+        kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
         include:
           - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
             kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
@@ -57,7 +59,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ vars.KOSLI_CLI_VERSION }}
+          version: ${{ matrix.kosli_cli_version }}
 
       - name: Download a single artifact
         uses: actions/download-artifact@v4.1.1
@@ -65,8 +67,6 @@ jobs:
           name: tf_artifacts
       
       - name: Attest terraform plan to Kosli trail
-        env:
-          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli attest generic
             --name tf-apply-plan
@@ -75,10 +75,9 @@ jobs:
             --evidence-paths ./plan.tfplan
             --host ${{ matrix.kosli_host }}
             --api-token ${{ secrets[matrix.kosli_api_token] }}
+            --dry-run ${{ matrix.kosli_dry_run }}
 
       - name: Attest PR to Kosli trail
-        env:
-          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli attest pr github
             --name pull-request
@@ -87,6 +86,7 @@ jobs:
             --github-token ${{ secrets.GITHUB_TOKEN }}
             --host ${{ matrix.kosli_host }}
             --api-token ${{ secrets[matrix.kosli_api_token] }}
+            --dry-run ${{ matrix.kosli_dry_run }}
 
   cleanup-workflow-artifacts:
     needs: [ kosli-attestations ]

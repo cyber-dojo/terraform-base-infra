@@ -22,6 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         kosli_env: [kosli-prod, kosli-staging]
+        kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
+        kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
         include:
           - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
             kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
@@ -36,27 +38,25 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ vars.KOSLI_CLI_VERSION }}
+          version: ${{ matrix.kosli_cli_version }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
-        env:
-          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli create flow ${{ env.KOSLI_FLOW }} 
             --template-file kosli-trail-template.yml 
             --description "Kosli flow to track terraform PRs for base infra"
             --host ${{ matrix.kosli_host }}
             --api-token ${{ secrets[matrix.kosli_api_token] }}
+            --dry-run ${{ matrix.kosli_dry_run }}
 
       - name: Create Kosli trail for terraform-base-infra PRs
-        env:
-          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli begin trail ${{ env.KOSLI_TRAIL }}
             --flow ${{ env.KOSLI_FLOW }} 
             --template-file kosli-trail-template.yml
             --host ${{ matrix.kosli_host }}
             --api-token ${{ secrets[matrix.kosli_api_token] }}
+            --dry-run ${{ matrix.kosli_dry_run }}
 
       - name: Configure AWS credentials for terraform validation
         id: configure-aws-creds
@@ -83,8 +83,6 @@ jobs:
           echo "KOSLI_TF_VALIDATION_COMLIANT=$(jq -r '.valid' ./validation_results.json)" >> ${GITHUB_ENV}
 
       - name: Attest terraform validation results to Kosli trail
-        env:
-          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli attest generic
             --name tf-validation
@@ -94,6 +92,7 @@ jobs:
             --compliant ${{ env.KOSLI_TF_VALIDATION_COMLIANT }}
             --host ${{ matrix.kosli_host }}
             --api-token ${{ secrets[matrix.kosli_api_token] }}
+            --dry-run ${{ matrix.kosli_dry_run }}
 
   plan:
     permissions:
@@ -118,6 +117,8 @@ jobs:
       fail-fast: false
       matrix:
         kosli_env: [kosli-prod, kosli-staging]
+        kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
+        kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
         include:
           - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
             kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
@@ -132,7 +133,7 @@ jobs:
       - name: Setup kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ vars.KOSLI_CLI_VERSION }}
+          version: ${{ matrix.kosli_cli_version }}
 
       - name: Download a single artifact
         uses: actions/download-artifact@v4.1.1
@@ -140,8 +141,6 @@ jobs:
           name: tf_artifacts
       
       - name: Attest tf plan to Kosli trail
-        env:
-          KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
         run:
           kosli attest generic
             --name tf-plan
@@ -150,6 +149,7 @@ jobs:
             --evidence-paths ./plan.tfplan
             --host ${{ matrix.kosli_host }}
             --api-token ${{ secrets[matrix.kosli_api_token] }}
+            --dry-run ${{ matrix.kosli_dry_run }}
 
   cleanup-workflow-artifacts:
     needs: [ trail-attest-tf-plan ]
