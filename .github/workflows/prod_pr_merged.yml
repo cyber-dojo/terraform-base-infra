@@ -43,14 +43,16 @@ jobs:
       fail-fast: false
       matrix:
         kosli_env: [kosli-prod, kosli-staging]
-        kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
-        kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
         include:
           - kosli_host: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
             kosli_api_token: "KOSLI_API_TOKEN_TRAILS"
+            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
+            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
             kosli_env: kosli-prod
           - kosli_host: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
             kosli_api_token: "KOSLI_API_TOKEN_TRAILS_STAGING"
+            kosli_cli_version: ${{ vars.KOSLI_CLI_VERSION }}
+            kosli_dry_run: ${{ vars.KOSLI_DRY_RUN }}
             kosli_env: kosli-staging
     steps:
       - name: Checkout
