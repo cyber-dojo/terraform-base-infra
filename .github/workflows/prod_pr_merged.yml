@@ -9,11 +9,9 @@ concurrency:
   group: ${{ github.workflow }}
 
 env:
-  KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
   KOSLI_ORG: cyber-dojo-trails
   KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
-  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
 
 jobs:
   apply:
@@ -40,6 +38,9 @@ jobs:
       id-token: write
       contents: read
       pull-requests: read
+    env:
+      KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+      KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

@@ -8,11 +8,9 @@ concurrency:
   group: ${{ github.workflow }} 
 
 env:
-  KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
   KOSLI_ORG: cyber-dojo-trails
   KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
-  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
 
 jobs:
   begin-trail:
@@ -20,6 +18,9 @@ jobs:
     permissions:
       id-token: write
       contents: write
+    env:
+      KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+      KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
     strategy:
       fail-fast: false
       matrix:
@@ -111,6 +112,9 @@ jobs:
   trail-attest-tf-plan:
     needs: [ begin-trail, plan ]
     runs-on: ubuntu-latest
+    env:
+      KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+      KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
     strategy:
       fail-fast: false
       matrix:
