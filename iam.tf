@@ -8,7 +8,7 @@ module "terraform_base_infra_policy" {
     "tf_backend",
     "s3_read",
     "acm_read",
-    "iam_read",
+    "iam_write",
     "ec2",
     "launch_template_update",
     "ecs_write",
