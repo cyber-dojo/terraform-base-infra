@@ -14,7 +14,7 @@ env:
   KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
   KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
+  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_PROD }}
   KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
 
 jobs:
