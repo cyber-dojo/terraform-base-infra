@@ -8,11 +8,11 @@ concurrency:
   group: ${{ github.workflow }} 
 
 env:
-  KOSLI_ORG: cyber-dojo-trails
+  KOSLI_ORG: cyber-dojo
   KOSLI_FLOW: terraform-base-infra-prs
   KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
   KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS }}
+  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
   KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
   KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
 
@@ -65,7 +65,7 @@ jobs:
       - name: Terraform validate
         run: |
           terraform validate -json > validation_results.json
-          echo "KOSLI_TF_VALIDATION_COMLIANT=$(jq -r '.valid' ./validation_results.json)" >> ${GITHUB_ENV}
+          echo "KOSLI_TF_VALIDATION_COMPLIANT=$(jq -r '.valid' ./validation_results.json)" >> ${GITHUB_ENV}
 
       - name: Attest terraform validation results to Kosli trail
         run:
@@ -73,8 +73,7 @@ jobs:
             --name tf-validation
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
-            --evidence-paths ./validation_results.json
-            --compliant ${{ env.KOSLI_TF_VALIDATION_COMLIANT }}
+            --compliant ${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
 
       - name: Upload validation results as artifact
         uses: actions/upload-artifact@v4.0.0
@@ -121,7 +120,6 @@ jobs:
             --name tf-plan
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
-            --evidence-paths ./plan.tfplan
 
   # Cleanup workflow artifacts
   cleanup-workflow-artifacts:
@@ -177,7 +175,7 @@ jobs:
           contents: write
     env:
       KOSLI_HOST: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
-      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_TRAILS_STAGING }}
+      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_STAGING }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -210,8 +208,7 @@ jobs:
             --name tf-validation
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
-            --evidence-paths ./validation_results.json
-            --compliant ${{ env.KOSLI_TF_VALIDATION_COMLIANT }}
+            --compliant ${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
 
       - name: Download terraform plan created in the plan job
         uses: actions/download-artifact@v4.1.1
@@ -224,4 +221,3 @@ jobs:
             --name tf-plan
             --flow ${{ env.KOSLI_FLOW }}
             --trail ${{ env.KOSLI_TRAIL }}
-            --evidence-paths ./plan.tfplan
