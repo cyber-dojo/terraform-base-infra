@@ -321,9 +321,9 @@ module "oidc_services_role" {
   tags = module.tags.result
 }
 
-# snyk_scans repo
+# live-snyk-scans repo
 
-module "oidc_snyk_scans_policy" {
+module "oidc_live_snyk_scans_policy" {
   source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
   create_policy = false
   allowed_actions = [
@@ -333,15 +333,15 @@ module "oidc_snyk_scans_policy" {
   ]
 }
 
-module "oidc_snyk_scans_role" {
+module "oidc_live_snyk_scans_role" {
   source            = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v4"
-  role_name         = "gh_actions_snyk_scans"
+  role_name         = "gh_actions_live_snyk_scans"
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
   oidc_repos_list = [
-    "cyber-dojo/snyk_scans"
+    "cyber-dojo/live-snyk-scans"
   ]
   oidc_policies_list = [
-    module.oidc_snyk_scans_policy.policy_document_json
+    module.oidc_live_snyk_scans_policy.policy_document_json
   ]
   tags = module.tags.result
 }
