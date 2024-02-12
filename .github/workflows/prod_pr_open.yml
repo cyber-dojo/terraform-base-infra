@@ -14,7 +14,6 @@ env:
   KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
   KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
   KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
-  KOSLI_CLI_VERSION: ${{ vars.KOSLI_CLI_VERSION }}
 
 jobs:
   begin-trail:
@@ -29,7 +28,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
@@ -107,7 +106,7 @@ jobs:
       - name: Setup kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Download terraform plan created in the plan job
         uses: actions/download-artifact@v4.1.1
@@ -183,7 +182,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
