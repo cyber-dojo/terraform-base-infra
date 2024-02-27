@@ -231,7 +231,8 @@ module "oidc_services_policy" {
     "acm_read",
     "iam_read",
     "ssm_read",
-    "logs_write"
+    "logs_write",
+    "s3_read"
   ]
 }
 
@@ -264,19 +265,8 @@ data "aws_iam_policy_document" "oidc_services_additional_policy" {
       "${module.state_bucket.s3_bucket_arn}/terraform/repler*",
       "${module.state_bucket.s3_bucket_arn}/terraform/runner*",
       "${module.state_bucket.s3_bucket_arn}/terraform/saver*",
-      "${module.state_bucket.s3_bucket_arn}/terraform/shas*",
       "${module.state_bucket.s3_bucket_arn}/terraform/web*",
       "${module.state_bucket.s3_bucket_arn}/terraform/version-reporter*"
-    ]
-  }
-  statement {
-    sid    = "S3Read"
-    effect = "Allow"
-    actions = [
-      "s3:GetObject"
-    ]
-    resources = [
-      "arn:aws:s3:::terraform-modules-9d7e951c290ec5bbe6506e0ddb064808764bc636/*"
     ]
   }
   statement {
