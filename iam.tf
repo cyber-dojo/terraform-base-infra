@@ -232,7 +232,8 @@ module "oidc_services_policy" {
     "iam_read",
     "ssm_read",
     "logs_write",
-    "s3_read"
+    "s3_read",
+    "lambda_write"
   ]
 }
 
