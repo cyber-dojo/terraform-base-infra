@@ -250,6 +250,26 @@ data "aws_iam_policy_document" "oidc_services_additional_policy" {
     ]
   }
   statement {
+    sid    = "S3PutBucketNotification"
+    effect = "Allow"
+    actions = [
+      "s3:PutBucketNotificationConfiguration"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "SetInstanceProtection"
+    effect = "Allow"
+    actions = [
+      "autoscaling:SetInstanceProtection"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
     sid    = "S3Write"
     effect = "Allow"
     actions = [
