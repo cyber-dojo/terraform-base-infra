@@ -23,13 +23,37 @@ module "terraform_base_infra_policy" {
   ]
 }
 
+data "aws_iam_policy_document" "oidc_terraform_base_infra_additional_policy" {
+  statement {
+    sid    = "S3PutBucketNotification"
+    effect = "Allow"
+    actions = [
+      "s3:PutBucketNotificationConfiguration"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    sid    = "SetInstanceProtection"
+    effect = "Allow"
+    actions = [
+      "autoscaling:SetInstanceProtection"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
 module "oidc_base_infra_role" {
   source            = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//github-oidc/v4"
   role_name         = "gh_base_infra"
   oidc_provider_arn = aws_iam_openid_connect_provider.github.arn
   oidc_repos_list   = ["cyber-dojo/terraform-base-infra"]
   oidc_policies_list = [
-    module.terraform_base_infra_policy.policy_document_json
+    module.terraform_base_infra_policy.policy_document_json,
+    data.aws_iam_policy_document.oidc_terraform_base_infra_additional_policy.json
   ]
   tags = module.tags.result
 }

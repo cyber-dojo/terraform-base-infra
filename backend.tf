@@ -43,6 +43,11 @@ module "state_bucket" {
   tags = module.tags.result
 }
 
+resource "aws_s3_bucket_notification" "state_bucket_notification" {
+  bucket      = module.state_bucket.s3_bucket_id
+  eventbridge = true
+}
+
 resource "aws_dynamodb_table" "state_lock" {
   name           = local.state_lock_dynamo_name
   hash_key       = local.lock_key_id
