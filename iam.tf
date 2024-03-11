@@ -258,7 +258,8 @@ module "oidc_services_policy" {
     "logs_write",
     "s3_read",
     "lambda_write",
-    "eventbridge_write"
+    "eventbridge_write",
+    "org_read"
   ]
 }
 
