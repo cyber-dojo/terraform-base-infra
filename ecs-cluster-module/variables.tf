@@ -118,3 +118,8 @@ variable "ecs_exec_kms_key_id" {
 variable "ecs_exec_s3_bucket_name" {
   type = string
 }
+
+variable "ebs_root_type" {
+  type    = string
+  default = "gp3"
+}

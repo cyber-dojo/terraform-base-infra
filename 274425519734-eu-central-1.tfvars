@@ -20,3 +20,5 @@ ecs_clusters = {
     ecs_cluster_on_demand_percentage_above_base_capacity = 100
   }
 }
+
+ebs_root_type = null

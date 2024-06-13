@@ -14,6 +14,7 @@ module "ecs_cluster" {
   ingress_allowed_sg_id       = local.ecs_node_ingress_allowed_sg_id
   ebs_id                      = module.ebs.ebs_id
   ebs_root_size               = var.ebs_root_size
+  ebs_root_type               = var.ebs_root_type
   ecs_exec_kms_key_id         = aws_kms_key.kms_ecs_exec_logs.key_id
   ecs_exec_s3_bucket_name     = module.ecs_exec_logs_bucket.s3_bucket_id
 

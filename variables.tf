@@ -40,6 +40,11 @@ variable "ecs_bridge_network_mode" {
   default = false
 }
 
+variable "ebs_root_type" {
+  type    = string
+  default = "gp3"
+}
+
 variable "oidc_repos_list" {
   type = list(string)
   default = [

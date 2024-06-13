@@ -12,6 +12,7 @@ resource "aws_launch_template" "this" {
 
     ebs {
       volume_size = var.ebs_root_size
+      volume_type = var.ebs_root_type
     }
   }
   tag_specifications {
