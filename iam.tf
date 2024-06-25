@@ -21,7 +21,9 @@ module "terraform_base_infra_policy" {
     "kms_read",
     "dlm_read",
     "sns_read",
-    "logs_write"
+    "logs_write",
+    "lambda_write",
+    "cloudwatch_read"
   ]
 }
 
