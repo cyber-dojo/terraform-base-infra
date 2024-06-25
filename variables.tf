@@ -89,3 +89,8 @@ variable "config_record_all_supported" {
   type        = bool
   default     = true
 }
+
+variable "slack_webhook_url" {
+  type    = string
+  default = "https://hooks.slack.com/services/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"
+}
