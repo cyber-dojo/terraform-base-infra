@@ -85,7 +85,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.15
+    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.20
     with:
       aws_region: eu-central-1
       aws_default_region: eu-central-1
