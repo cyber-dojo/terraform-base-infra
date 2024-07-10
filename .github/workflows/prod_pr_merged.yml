@@ -31,7 +31,7 @@ jobs:
       aws_role_duration: 900
       working_directory: ./
       tf_apply: 'true'
-      tf_version: v1.4.5
+      tf_version: v1.9.1
       tf_upload_artifacts: 'true'
       tf_upload_artifact_path: "./plan.tfplan"
 

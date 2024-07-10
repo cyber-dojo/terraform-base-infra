@@ -92,7 +92,7 @@ jobs:
       aws_role_arn: arn:aws:iam::274425519734:role/gh_base_infra
       aws_role_duration: 900
       working_directory: ./
-      tf_version: v1.4.5
+      tf_version: v1.9.1
       tf_dont_fail_if_plan_not_empty: true
       tf_upload_artifacts: 'true'
       tf_upload_artifact_path: "./plan.tfplan"
