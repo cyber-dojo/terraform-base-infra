@@ -1,6 +1,6 @@
 # Allow GH actions in the terraform-base-infra repo to check configuration drift
 module "terraform_base_infra_policy" {
-  source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  source                        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v2"
   create_policy                 = false
   state_bucket_arn              = module.state_bucket.s3_bucket_arn
   dynamodb_table_state_lock_arn = aws_dynamodb_table.state_lock.arn
@@ -23,7 +23,7 @@ module "terraform_base_infra_policy" {
     "sns_read",
     "logs_write",
     "lambda_write",
-    "cloudwatch_read"
+    "cloudwatch_write"
   ]
 }
 
@@ -64,7 +64,7 @@ module "oidc_base_infra_role" {
 
 # Enable access from merkely-environment-reporter repo to deploy Kosli reporters
 module "kosli_environment_reporter_policy" {
-  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v2"
   create_policy = false
   allowed_actions = [
     "iam_read",
@@ -151,7 +151,7 @@ module "oidc_kosli_environment_reporter_role" {
 
 # kosli-envidence-reporter repo
 module "kosli_evidence_reporter_policy" {
-  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v2"
   create_policy = false
   allowed_actions = [
     "s3_read",
@@ -247,7 +247,7 @@ module "oidc_terraform_modules_role" {
 
 # Enable services deployment for the services repositories
 module "oidc_services_policy" {
-  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v2"
   create_policy = false
   allowed_actions = [
     "ecr_push",
@@ -345,7 +345,7 @@ module "oidc_services_role" {
 # live-snyk-scans repo
 
 module "oidc_live_snyk_scans_policy" {
-  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v1"
+  source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v2"
   create_policy = false
   allowed_actions = [
     "ecr_push",
