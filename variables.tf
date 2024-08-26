@@ -94,3 +94,8 @@ variable "slack_webhook_url" {
   type    = string
   default = "https://hooks.slack.com/services/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"
 }
+
+variable "grafana_account_id" {
+  type    = string
+  default = "855032297737"
+}
