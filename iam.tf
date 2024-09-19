@@ -23,7 +23,8 @@ module "terraform_base_infra_policy" {
     "sns_read",
     "logs_write",
     "lambda_write",
-    "cloudwatch_write"
+    "cloudwatch_write",
+    "macie_write"
   ]
 }
 
