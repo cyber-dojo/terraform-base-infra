@@ -7,6 +7,7 @@ module "terraform_base_infra_policy" {
   allowed_actions = [
     "tf_backend",
     "s3_read",
+    "s3_write",
     "acm_read",
     "iam_write",
     "ec2",
