@@ -335,7 +335,8 @@ module "oidc_services_role" {
     "cyber-dojo/saver",
     "cyber-dojo/shas",
     "cyber-dojo/web",
-    "cyber-dojo/version-reporter"
+    "cyber-dojo/version-reporter",
+    "cyber-dojo/versioner"
   ]
   oidc_policies_list = [
     module.oidc_services_policy.policy_document_json,
