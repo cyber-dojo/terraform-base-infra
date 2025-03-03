@@ -337,7 +337,7 @@ module "oidc_services_role" {
     "cyber-dojo/web",
     "cyber-dojo/version-reporter",
     "cyber-dojo/versioner",
-    "cyber-dojo/prod-promotion"
+    "cyber-dojo/aws-prod-co-promotion"
   ]
   oidc_policies_list = [
     module.oidc_services_policy.policy_document_json,
