@@ -9,13 +9,13 @@ concurrency:
   group: ${{ github.workflow }}
 
 env:
-  KOSLI_ORG: cyber-dojo
-  KOSLI_CLI_VERSION: 2.7.8
-  KOSLI_FLOW: terraform-base-infra-prs
-  KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
-  KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_PROD }}
-  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_ORG:       ${{ vars.KOSLI_ORG }}               # cyber-dojo
+  KOSLI_FLOW:      ${{ vars.KOSLI_FLOW }}
+  KOSLI_TRAIL:     PR-${{ github.event.pull_request.number }}
+  KOSLI_HOST:      ${{ vars.KOSLI_HOST }}              # https://app.kosli.com
+  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
+  KOSLI_DRY_RUN:   ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_DEBUG:     ${{ vars.KOSLI_DEBUG }}             # true/false
 
 jobs:
   apply:
@@ -50,7 +50,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION}}
+          version: ${{ vars.KOSLI_CLI_VERSION}}
 
       - name: Download a single artifact
         uses: actions/download-artifact@v4.1.1
@@ -105,9 +105,6 @@ jobs:
       id-token: write
       contents: read
       pull-requests: read
-    env:
-      KOSLI_HOST: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
-      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_STAGING }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -116,7 +113,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION}}
+          version: ${{ vars.KOSLI_CLI_VERSION}}
 
       - name: Download a single artifact
         uses: actions/download-artifact@v4.1.1
