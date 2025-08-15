@@ -8,13 +8,13 @@ concurrency:
   group: ${{ github.workflow }} 
 
 env:
-  KOSLI_ORG: cyber-dojo
-  KOSLI_CLI_VERSION: 2.7.8
-  KOSLI_FLOW: terraform-base-infra-prs
-  KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
-  KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_PROD }}
-  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_ORG:       ${{ vars.KOSLI_ORG }}               # cyber-dojo
+  KOSLI_FLOW:      ${{ vars.KOSLI_FLOW }}
+  KOSLI_TRAIL:     PR-${{ github.event.pull_request.number }}
+  KOSLI_HOST:      ${{ vars.KOSLI_HOST }}              # https://app.kosli.com
+  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
+  KOSLI_DRY_RUN:   ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_DEBUG:     ${{ vars.KOSLI_DEBUG }}             # true/false
 
 jobs:
   begin-trail:
@@ -29,7 +29,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
@@ -107,7 +107,7 @@ jobs:
       - name: Setup kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Download terraform plan created in the plan job
         uses: actions/download-artifact@v4.1.1
@@ -173,9 +173,6 @@ jobs:
     permissions:
           id-token: write
           contents: write
-    env:
-      KOSLI_HOST: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
-      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_STAGING }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -183,7 +180,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
