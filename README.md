@@ -1,5 +1,7 @@
+
 This repo is used to create base infrastructure for the cyber-dojo project. 
-Pushing changes to the master branch will trigger the beta env infra deployment; merging checges to the prod branch - triggers the prod infra deployment.
+- pushing changes to the master branch triggers the beta env infra deployment. 
+- merging changes to the prod branch triggers the prod env infra deployment.
 
 # EC2 nodes monitoring
 We use [Monit](https://mmonit.com/monit/) tool to monitor basic node metrics (free disc space, RAM, CPU). Alerts are sent to the Slack channel #cyber-dojo-alerts. 
