@@ -17,7 +17,7 @@ module "ecs_cluster" {
   ebs_root_type               = var.ebs_root_type
   ecs_exec_kms_key_id         = aws_kms_key.kms_ecs_exec_logs.key_id
   ecs_exec_s3_bucket_name     = module.ecs_exec_logs_bucket.s3_bucket_id
-  slack_webhook_url           = var.slack_webhook_url
+  slack_webhook_url           = data.aws_ssm_parameter.slack_webhook_url.value
 
   docker_gc_grace_period_seconds = 432000
 
@@ -109,7 +109,7 @@ module "ebs_notification_lambda" {
 
   cloudwatch_log_group_retention_in_days = 1
 
-  slack_webhook_url = var.slack_webhook_url
+  slack_webhook_url = data.aws_ssm_parameter.slack_webhook_url.value
   slack_channel     = "cyber-dojo-alerts"
   slack_username    = "cloudwatch-reporter"
 
