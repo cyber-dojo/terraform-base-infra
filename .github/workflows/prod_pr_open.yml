@@ -200,22 +200,22 @@ jobs:
         with:
           name: validation_results
 
-       - name: Attest terraform validation results to Kosli trail
-         run:
-           kosli attest generic
-             --name tf-validation
-             --flow ${{ env.KOSLI_FLOW }}
-             --trail ${{ env.KOSLI_TRAIL }}
-             --compliant=${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
+      - name: Attest terraform validation results to Kosli trail
+        run:
+          kosli attest generic
+            --name tf-validation
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
+            --compliant=${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
 
       - name: Download terraform plan created in the plan job
         uses: actions/download-artifact@v4.1.1
         with:
           name: tf_artifacts_plan_prod
 
-       - name: Attest tf plan to Kosli trail
-         run:
-           kosli attest generic
-             --name tf-plan
-             --flow ${{ env.KOSLI_FLOW }}
-             --trail ${{ env.KOSLI_TRAIL }}
+      - name: Attest tf plan to Kosli trail
+        run:
+          kosli attest generic
+            --name tf-plan
+            --flow ${{ env.KOSLI_FLOW }}
+            --trail ${{ env.KOSLI_TRAIL }}
