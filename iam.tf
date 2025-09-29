@@ -72,7 +72,7 @@ module "kosli_environment_reporter_policy" {
     "iam_read",
     "ssm_read",
     "logs_write",
-    "lambda_read",
+    "lambda_write",
     "eventbridge_write"
   ]
 }
