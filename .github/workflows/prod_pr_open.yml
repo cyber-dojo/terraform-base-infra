@@ -8,13 +8,13 @@ concurrency:
   group: ${{ github.workflow }} 
 
 env:
-  KOSLI_ORG: cyber-dojo
-  KOSLI_CLI_VERSION: 2.7.8
-  KOSLI_FLOW: terraform-base-infra-prs
-  KOSLI_TRAIL: PR-${{ github.event.pull_request.number }}
-  KOSLI_HOST: ${{ vars.KOSLI_HOST }} # https://app.kosli.com
-  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_PROD }}
-  KOSLI_DRY_RUN: ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_ORG:       ${{ vars.KOSLI_ORG }}               # cyber-dojo
+  KOSLI_FLOW:      ${{ vars.KOSLI_FLOW }}
+  KOSLI_TRAIL:     PR-${{ github.event.pull_request.number }}
+  KOSLI_HOST:      ${{ vars.KOSLI_HOST }}              # https://app.kosli.com
+  KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
+  KOSLI_DRY_RUN:   ${{ vars.KOSLI_DRY_RUN }}
+  KOSLI_DEBUG:     ${{ vars.KOSLI_DEBUG }}             # true/false
 
 jobs:
   begin-trail:
@@ -29,7 +29,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
@@ -67,13 +67,13 @@ jobs:
           terraform validate -json > validation_results.json
           echo "KOSLI_TF_VALIDATION_COMPLIANT=$(jq -r '.valid' ./validation_results.json)" >> ${GITHUB_ENV}
 
-      - name: Attest terraform validation results to Kosli trail
-        run:
-          kosli attest generic
-            --name tf-validation
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
-            --compliant ${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
+      #- name: Attest terraform validation results to Kosli trail
+      #  run:
+      #    kosli attest generic
+      #      --name tf-validation
+      #      --flow ${{ env.KOSLI_FLOW }}
+      #      --trail ${{ env.KOSLI_TRAIL }}
+      #      --compliant ${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
 
       - name: Upload validation results as artifact
         uses: actions/upload-artifact@v4.0.0
@@ -85,17 +85,18 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.15
+    uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.26
     with:
       aws_region: eu-central-1
       aws_default_region: eu-central-1
       aws_role_arn: arn:aws:iam::274425519734:role/gh_base_infra
       aws_role_duration: 900
       working_directory: ./
-      tf_version: v1.4.5
+      tf_version: v1.9.1
+      tf_sh_version: 0.2.1
       tf_dont_fail_if_plan_not_empty: true
-      tf_upload_artifacts: 'true'
-      tf_upload_artifact_path: "./plan.tfplan"
+      tf_upload_artifact_plan: 'true'
+      tf_upload_artifact_name_suffix: "_prod"
 
   trail-attest-tf-plan:
     needs: [  begin-trail, plan ]
@@ -107,19 +108,19 @@ jobs:
       - name: Setup kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Download terraform plan created in the plan job
         uses: actions/download-artifact@v4.1.1
         with:
-          name: tf_artifacts
+          name: tf_artifacts_plan_prod
       
-      - name: Attest tf plan to Kosli trail
-        run:
-          kosli attest generic
-            --name tf-plan
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
+      #- name: Attest tf plan to Kosli trail
+      #  run:
+      #    kosli attest generic
+      #      --name tf-plan
+      #      --flow ${{ env.KOSLI_FLOW }}
+      #      --trail ${{ env.KOSLI_TRAIL }}
 
   # Cleanup workflow artifacts
   cleanup-workflow-artifacts:
@@ -136,7 +137,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository}}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name == "tf_artifacts").id')
+            https://api.github.com/repos/${{ github.repository}}/actions/runs/${{ github.run_id }}/artifacts | jq -r '.artifacts[] | select(.name == "tf_artifacts_plan_prod").id')
 
           # Delete each artifact
           curl -L \
@@ -173,9 +174,6 @@ jobs:
     permissions:
           id-token: write
           contents: write
-    env:
-      KOSLI_HOST: ${{ vars.KOSLI_HOST_STAGING }} # https://staging.app.kosli.com
-      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN_STAGING }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -183,7 +181,7 @@ jobs:
       - name: Setup Kosli cli
         uses: kosli-dev/setup-cli-action@v2
         with:
-          version: ${{ env.KOSLI_CLI_VERSION }}
+          version: ${{ vars.KOSLI_CLI_VERSION }}
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
@@ -202,22 +200,22 @@ jobs:
         with:
           name: validation_results
 
-      - name: Attest terraform validation results to Kosli trail
-        run:
-          kosli attest generic
-            --name tf-validation
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
-            --compliant ${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
+      # - name: Attest terraform validation results to Kosli trail
+      #   run:
+      #     kosli attest generic
+      #       --name tf-validation
+      #       --flow ${{ env.KOSLI_FLOW }}
+      #       --trail ${{ env.KOSLI_TRAIL }}
+      #       --compliant ${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
 
       - name: Download terraform plan created in the plan job
         uses: actions/download-artifact@v4.1.1
         with:
-          name: tf_artifacts
+          name: tf_artifacts_plan_prod
 
-      - name: Attest tf plan to Kosli trail
-        run:
-          kosli attest generic
-            --name tf-plan
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
+      # - name: Attest tf plan to Kosli trail
+      #   run:
+      #     kosli attest generic
+      #       --name tf-plan
+      #       --flow ${{ env.KOSLI_FLOW }}
+      #       --trail ${{ env.KOSLI_TRAIL }}

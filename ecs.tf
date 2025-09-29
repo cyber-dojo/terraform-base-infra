@@ -14,8 +14,10 @@ module "ecs_cluster" {
   ingress_allowed_sg_id       = local.ecs_node_ingress_allowed_sg_id
   ebs_id                      = module.ebs.ebs_id
   ebs_root_size               = var.ebs_root_size
+  ebs_root_type               = var.ebs_root_type
   ecs_exec_kms_key_id         = aws_kms_key.kms_ecs_exec_logs.key_id
   ecs_exec_s3_bucket_name     = module.ecs_exec_logs_bucket.s3_bucket_id
+  slack_webhook_url           = var.slack_webhook_url
 
   docker_gc_grace_period_seconds = 432000
 
@@ -34,29 +36,11 @@ locals {
 }
 
 # KMS key to encrypt ECS exec logs
-data "aws_iam_policy_document" "kms_ecs_exec_logs" {
-  source_policy_documents = [data.aws_iam_policy_document.kms_main.json]
-  statement {
-    sid    = "Enable AWS account"
-    effect = "Allow"
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.id}:root"]
-    }
-    actions = [
-      "kms:*"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-}
-
 resource "aws_kms_key" "kms_ecs_exec_logs" {
   description              = "S3 Bucket for ECS exec logs"
   key_usage                = "ENCRYPT_DECRYPT"
   customer_master_key_spec = "SYMMETRIC_DEFAULT"
-  policy                   = data.aws_iam_policy_document.kms_ecs_exec_logs.json
+  policy                   = data.aws_iam_policy_document.kms_main.json
   deletion_window_in_days  = 30
   enable_key_rotation      = false
   tags                     = local.tags
@@ -106,4 +90,93 @@ module "ecs_exec_logs_bucket" {
 resource "aws_s3_bucket_notification" "ecs_exec_logs_bucket_notification" {
   bucket      = module.ecs_exec_logs_bucket.s3_bucket_id
   eventbridge = true
+}
+
+# root EBS high I/O alarm
+resource "aws_sns_topic" "ebs_io" {
+  name = "ebs_io_alerts"
+}
+
+module "ebs_notification_lambda" {
+  source  = "terraform-aws-modules/notify-slack/aws"
+  version = "6.3.0"
+
+  sns_topic_name   = aws_sns_topic.ebs_io.name
+  create_sns_topic = false
+
+  lambda_function_name     = "ebs_io_alerts"
+  recreate_missing_package = false
+
+  cloudwatch_log_group_retention_in_days = 1
+
+  slack_webhook_url = var.slack_webhook_url
+  slack_channel     = "cyber-dojo-alerts"
+  slack_username    = "cloudwatch-reporter"
+
+  lambda_description = "Lambda function which sends cloudwatch EBS alerts to Slack"
+  log_events         = true
+
+  tags = module.tags.result
+}
+
+resource "aws_cloudwatch_metric_alarm" "ebs_high_io" {
+  alarm_name                = "ebs-high-io"
+  alarm_description         = "Environment name: ${var.env_name} (${data.aws_caller_identity.current.account_id}). High I/O"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  threshold                 = "150000"
+  datapoints_to_alarm       = 1
+  treat_missing_data        = "ignore"
+  insufficient_data_actions = []
+  alarm_actions             = [aws_sns_topic.ebs_io.arn]
+  ok_actions                = [aws_sns_topic.ebs_io.arn]
+  metric_query {
+    id          = "read"
+    period      = 0
+    return_data = false
+    metric {
+      dimensions = {
+        "VolumeId" = data.aws_ebs_volume.ec2_root.id
+      }
+      metric_name = "VolumeReadOps"
+      namespace   = "AWS/EBS"
+      period      = 10
+      stat        = "Average"
+    }
+  }
+  metric_query {
+    id          = "write"
+    period      = 0
+    return_data = false
+    metric {
+      dimensions = {
+        "VolumeId" = data.aws_ebs_volume.ec2_root.id
+      }
+      metric_name = "VolumeWriteOps"
+      namespace   = "AWS/EBS"
+      period      = 10
+      stat        = "Average"
+    }
+  }
+  metric_query {
+    expression  = "read+write"
+    id          = "sum"
+    label       = "Total IOPS"
+    period      = 0
+    return_data = true
+  }
+}
+
+data "aws_ebs_volume" "ec2_root" {
+  most_recent = true
+
+  filter {
+    name   = "volume-type"
+    values = [var.ebs_root_type]
+  }
+
+  filter {
+    name   = "tag:Name"
+    values = ["app"]
+  }
 }

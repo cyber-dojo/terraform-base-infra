@@ -5,11 +5,12 @@ vpc_azs_max                 = 2
 ecs_bridge_network_mode     = true
 create_tf_modules_bucket    = true
 config_record_all_supported = false
-ebs_root_size               = 50
+ebs_size                    = 120
+ebs_root_size               = 100
 
 ecs_clusters = {
   app = {
-    instance_types_list    = ["c5a.xlarge"] # 1-year saving plan for c5a family purchased 05.10.23
+    instance_types_list    = ["c5a.xlarge"] # 1-year saving plan for c5a family purchased 09.10.24; hourly commitment $0.21500
     managed_scaling_status = "DISABLED"
 
     ecs_cluster_desired_capacity                         = 1

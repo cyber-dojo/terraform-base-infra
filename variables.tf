@@ -40,6 +40,11 @@ variable "ecs_bridge_network_mode" {
   default = false
 }
 
+variable "ebs_root_type" {
+  type    = string
+  default = "gp3"
+}
+
 variable "oidc_repos_list" {
   type = list(string)
   default = [
@@ -83,4 +88,14 @@ variable "config_record_all_supported" {
   description = "Specifies whether AWS Config records configuration changes for every supported type of regional resource (which includes any new type that will become supported in the future)."
   type        = bool
   default     = true
+}
+
+variable "slack_webhook_url" {
+  type    = string
+  default = "https://hooks.slack.com/services/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"
+}
+
+variable "grafana_account_id" {
+  type    = string
+  default = "855032297737"
 }

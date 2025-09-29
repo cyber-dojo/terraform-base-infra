@@ -1,3 +1,10 @@
+resource "aws_s3_account_public_access_block" "this" {
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 locals {
   vpc_flow_logs_bucket_name     = format("flow-log-%s", sha1(local.environment_id))
   cli_tool_bucket_name          = format("cli-tool-%s", sha1(local.environment_id))

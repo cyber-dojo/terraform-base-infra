@@ -102,8 +102,7 @@ variable "slack_notifier_version" {
 }
 
 variable "slack_webhook_url" {
-  type    = string
-  default = "https://hooks.slack.com/services/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"
+  type = string
 }
 
 variable "docker_gc_grace_period_seconds" {
@@ -117,4 +116,9 @@ variable "ecs_exec_kms_key_id" {
 
 variable "ecs_exec_s3_bucket_name" {
   type = string
+}
+
+variable "ebs_root_type" {
+  type    = string
+  default = "gp3"
 }
