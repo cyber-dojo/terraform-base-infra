@@ -93,9 +93,10 @@ jobs:
       aws_role_duration: 900
       working_directory: ./
       tf_version: v1.9.1
+      tf_sh_version: 0.2.1
       tf_dont_fail_if_plan_not_empty: true
-      tf_upload_artifacts: 'true'
-      tf_upload_artifact_path: "./plan.tfplan"
+      tf_upload_artifact_plan: 'true'
+      tf_upload_artifact_name_suffix: "_prod"
 
   trail-attest-tf-plan:
     needs: [  begin-trail, plan ]
