@@ -124,7 +124,7 @@ jobs:
 
   # Cleanup workflow artifacts
   cleanup-workflow-artifacts:
-    needs: [ trail-attest-tf-plan, trails-reporting-staging ]
+    needs: [ trail-attest-tf-plan ]
     runs-on: ubuntu-latest
     permissions:
       actions: write
