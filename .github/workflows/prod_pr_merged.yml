@@ -58,20 +58,20 @@ jobs:
         with:
           name: tf_artifacts
       
-      - name: Attest terraform plan to Kosli trail
-        run:
-          kosli attest generic
-            --name tf-apply-plan
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
+      # - name: Attest terraform plan to Kosli trail
+      #   run:
+      #     kosli attest generic
+      #       --name tf-apply-plan
+      #       --flow ${{ env.KOSLI_FLOW }}
+      #       --trail ${{ env.KOSLI_TRAIL }}
 
-      - name: Attest PR to Kosli trail
-        run:
-          kosli attest pr github
-            --name pull-request
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
-            --github-token ${{ secrets.GITHUB_TOKEN }}
+      # - name: Attest PR to Kosli trail
+      #   run:
+      #     kosli attest pr github
+      #       --name pull-request
+      #       --flow ${{ env.KOSLI_FLOW }}
+      #       --trail ${{ env.KOSLI_TRAIL }}
+      #       --github-token ${{ secrets.GITHUB_TOKEN }}
 
   # Cleanup workflow artifacts
   cleanup-workflow-artifacts:
