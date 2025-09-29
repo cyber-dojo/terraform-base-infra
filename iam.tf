@@ -69,9 +69,10 @@ module "kosli_environment_reporter_policy" {
   source        = "s3::https://s3-eu-central-1.amazonaws.com/terraform-modules-dacef8339fbd41ce31c346f854a85d0c74f7c4e8/terraform-modules.zip//iam/policy-combine/v2"
   create_policy = false
   allowed_actions = [
-    "iam_read",
+    "iam_write",
     "ssm_read",
     "logs_write",
+    "lambda_read",
     "lambda_write",
     "eventbridge_write"
   ]
