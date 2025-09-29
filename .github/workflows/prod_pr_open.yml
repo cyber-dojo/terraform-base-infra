@@ -5,7 +5,7 @@ on:
     branches: [ prod ]
 
 concurrency:
-  group: ${{ github.workflow }} 
+  group: ${{ github.workflow }}
 
 env:
   KOSLI_ORG:       ${{ vars.KOSLI_ORG }}               # cyber-dojo
@@ -33,14 +33,14 @@ jobs:
 
       - name: Create Kosli flow for terraform-base-infra PRs
         run:
-          kosli create flow ${{ env.KOSLI_FLOW }} 
-            --template-file kosli-trail-template.yml 
+          kosli create flow ${{ env.KOSLI_FLOW }}
+            --template-file kosli-trail-template.yml
             --description "Kosli flow to track terraform PRs for base infra"
 
       - name: Create Kosli trail for terraform-base-infra PRs
         run:
           kosli begin trail ${{ env.KOSLI_TRAIL }}
-            --flow ${{ env.KOSLI_FLOW }} 
+            --flow ${{ env.KOSLI_FLOW }}
             --template-file kosli-trail-template.yml
 
       - name: Configure AWS credentials for terraform validation
@@ -114,7 +114,7 @@ jobs:
         uses: actions/download-artifact@v4.1.1
         with:
           name: tf_artifacts_plan_prod
-      
+
       - name: Attest tf plan to Kosli trail
         run:
           kosli attest generic
@@ -146,7 +146,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/${{ github.repository}}/actions/artifacts/${artifact_id}
-        
+
       - name: Delete validation_results artifact
         run: |
           # Get the list of artifacts
