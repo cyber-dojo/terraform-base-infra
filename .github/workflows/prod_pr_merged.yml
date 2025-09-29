@@ -32,8 +32,9 @@ jobs:
       working_directory: ./
       tf_apply: 'true'
       tf_version: v1.9.1
-      tf_upload_artifacts: 'true'
-      tf_upload_artifact_path: "./plan.tfplan"
+      tf_sh_version: 0.2.1
+      tf_upload_artifact_plan: 'true'
+      tf_upload_artifact_name_suffix: "_prod"
 
   kosli-attestations:
     needs: apply
