@@ -11,7 +11,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 ./aws/install
 
-INSTANCE_ID=$(ec2-metadata -i | awk '{print $2}')
+# AL2023 does not ship the ec2-metadata helper; query IMDSv2 directly.
+IMDS_TOKEN=$(curl -sX PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 60")
+INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $IMDS_TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
 
 # Wait until volume is available, then mount it to ec2
 EBS_STATE=$(/usr/local/bin/aws ec2 describe-volumes --volume-ids ${VOLUME_ID} --query 'Volumes[*].[State]' --output text)
