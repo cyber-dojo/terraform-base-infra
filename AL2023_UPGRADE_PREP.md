@@ -43,9 +43,17 @@ affect the running instance before that apply.
 - [ ] **B3. Record current ECS service desired counts** so the rollout's "back to N" step has a
   target. The rollout reduces them to 0 to quiesce writes; without a record, you'll guess.
 
-- [ ] **B4. Take a manual baseline snapshot now.** You'll take another immediately before cutover,
-  but having a clean baseline now lets you verify your restore-from-snapshot procedure works
-  without time pressure.
+- [ ] **B4. Take a manual baseline snapshot of the `/ebs_data` volume now** (i.e. the
+  `aws_ebs_volume.this` resource defined in `ebs/main.tf` — not an AMI of the whole instance; the
+  root volume is rebuilt on every replacement and holds nothing worth preserving). You'll take
+  another immediately before cutover, but having a clean baseline now lets you verify your
+  restore-from-snapshot procedure works without time pressure.
+  ```
+  aws ec2 create-snapshot \
+    --volume-id <data-vol-id> \
+    --description "AL2023 pre-upgrade baseline $(date -u +%Y%m%d)"
+  aws ec2 wait snapshot-completed --snapshot-ids <snap-id>
+  ```
 
 - [ ] **B5. Verify DLM has fresh snapshots** of the data volume (last 24h). Confirms the safety net
   is actually running, not silently broken.
