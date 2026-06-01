@@ -5,6 +5,10 @@ resource "aws_ebs_volume" "this" {
   type              = "gp3"
 
   tags = merge(var.tags, { Name = var.ebs_name })
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_iam_role" "dlm_lifecycle_role" {
