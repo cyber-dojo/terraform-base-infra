@@ -259,6 +259,7 @@ module "oidc_services_policy" {
     "service_discovery_read",
     "ecs_write",
     "ec2",
+    "launch_template_update",
     "acm_read",
     "iam_read",
     "ssm_read",
