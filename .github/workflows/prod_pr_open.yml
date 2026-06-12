@@ -24,24 +24,7 @@ jobs:
           contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Kosli cli
-        uses: kosli-dev/setup-cli-action@v2
-        with:
-          version: ${{ vars.KOSLI_CLI_VERSION }}
-
-      - name: Create Kosli flow for terraform-base-infra PRs
-        run:
-          kosli create flow ${{ env.KOSLI_FLOW }}
-            --template-file kosli-trail-template.yml
-            --description "Kosli flow to track terraform PRs for base infra"
-
-      - name: Create Kosli trail for terraform-base-infra PRs
-        run:
-          kosli begin trail ${{ env.KOSLI_TRAIL }}
-            --flow ${{ env.KOSLI_FLOW }}
-            --template-file kosli-trail-template.yml
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials for terraform validation
         id: configure-aws-creds
@@ -67,21 +50,8 @@ jobs:
           terraform validate -json > validation_results.json
           echo "KOSLI_TF_VALIDATION_COMPLIANT=$(jq -r '.valid' ./validation_results.json)" >> ${GITHUB_ENV}
 
-      - name: Attest terraform validation results to Kosli trail
-        run:
-          kosli attest generic
-            --name tf-validation
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
-            --compliant=${{ env.KOSLI_TF_VALIDATION_COMPLIANT }}
-
-      - name: Upload validation results as artifact
-        uses: actions/upload-artifact@v4.0.0
-        with:
-          name: validation_results
-          path: ./validation_results.json
-
   plan:
+    needs: [ begin-trail ]
     permissions:
       id-token: write
       contents: write
@@ -98,33 +68,9 @@ jobs:
       tf_upload_artifact_plan: 'true'
       tf_upload_artifact_name_suffix: "_prod"
 
-  trail-attest-tf-plan:
-    needs: [  begin-trail, plan ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup kosli cli
-        uses: kosli-dev/setup-cli-action@v2
-        with:
-          version: ${{ vars.KOSLI_CLI_VERSION }}
-
-      - name: Download terraform plan created in the plan job
-        uses: actions/download-artifact@v4.1.1
-        with:
-          name: tf_artifacts_plan_prod
-
-      - name: Attest tf plan to Kosli trail
-        run:
-          kosli attest generic
-            --name tf-plan
-            --flow ${{ env.KOSLI_FLOW }}
-            --trail ${{ env.KOSLI_TRAIL }}
-
   # Cleanup workflow artifacts
   cleanup-workflow-artifacts:
-    needs: [ trail-attest-tf-plan ]
+    needs: [ plan ]
     runs-on: ubuntu-latest
     permissions:
       actions: write
