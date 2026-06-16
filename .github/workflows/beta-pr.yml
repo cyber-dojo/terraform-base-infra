@@ -1,0 +1,24 @@
+name: 'Plan'
+
+on:
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  plan:
+    permissions:
+      id-token: write
+      contents: write
+    uses: kosli-dev/tf/.github/workflows/plan.yml@main
+    strategy:
+      fail-fast: false
+    name: "Beta plan"
+    with:
+      aws_region: "eu-central-1"
+      aws_role_arn: "arn:aws:iam::244531986313:role/gh_base_infra"
+      environment: "beta"
+      tf_version: v1.14.9
