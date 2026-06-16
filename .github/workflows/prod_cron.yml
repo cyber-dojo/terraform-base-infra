@@ -12,6 +12,7 @@ jobs:
       contents: write
     uses: fivexl/gh-workflow-tf-plan-apply/.github/workflows/base.yml@v0.0.26
     with:
+      checkout_commit_sha: prod
       aws_region: eu-central-1
       aws_default_region: eu-central-1
       aws_role_arn: arn:aws:iam::274425519734:role/gh_base_infra
