@@ -1,4 +1,4 @@
-name: 'Plan'
+name: 'Beta Plan'
 
 on:
   pull_request:
