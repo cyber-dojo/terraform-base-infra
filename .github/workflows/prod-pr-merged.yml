@@ -1,0 +1,31 @@
+name: 'Prod Apply'
+
+on:
+  push:
+    branches:
+      - prod
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  apply:
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: read
+    uses: kosli-dev/tf/.github/workflows/apply.yml@main
+    strategy:
+      fail-fast: false
+    name: "Prod apply"
+    with:
+      aws_region: eu-central-1
+      aws_role_arn: "arn:aws:iam::274425519734:role/gh_base_infra"
+      environment: prod
+      tf_version: v1.14.9
+      kosli_host: ${{ vars.KOSLI_HOST }}           # https://app.kosli.com
+      kosli_org: ${{ vars.KOSLI_ORG }}             # cyber-dojo
+      kosli_template_file: flow-templates/kosli-apply.yml
+    secrets:
+      kosli_api_token: "${{ secrets.KOSLI_API_TOKEN}}"
+      kosli_github_token: ${{ secrets.GITHUB_TOKEN }}
