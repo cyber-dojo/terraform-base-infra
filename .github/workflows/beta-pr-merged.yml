@@ -1,0 +1,25 @@
+name: 'Beta Apply'
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  apply:
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: read
+    uses: kosli-dev/tf/.github/workflows/apply.yml@main
+    strategy:
+      fail-fast: false
+    name: "Beta apply"
+    with:
+      aws_region: "eu-central-1"
+      aws_role_arn: "arn:aws:iam::244531986313:role/gh_base_infra"
+      environment: "beta"
+      tf_version: v1.14.9

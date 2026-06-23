@@ -1,0 +1,29 @@
+name: 'Prod Plan'
+
+on:
+  pull_request:
+    branches:
+      - prod
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  plan:
+    permissions:
+      id-token: write
+      contents: write
+    uses: kosli-dev/tf/.github/workflows/plan.yml@main
+    strategy:
+      fail-fast: false
+    name: "Prod Plan"
+    with:
+      aws_region: eu-central-1
+      aws_role_arn: "arn:aws:iam::274425519734:role/gh_base_infra"
+      environment: prod
+      tf_version: v1.14.9
+      kosli_host: ${{ vars.KOSLI_HOST }}           # https://app.kosli.com
+      kosli_org: ${{ vars.KOSLI_ORG }}             # cyber-dojo
+      kosli_template_file: flow-templates/kosli-plan.yml
+    secrets:
+      kosli_api_token: "${{ secrets.KOSLI_API_TOKEN}}"
