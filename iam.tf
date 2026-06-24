@@ -31,6 +31,16 @@ module "terraform_base_infra_policy" {
 
 data "aws_iam_policy_document" "oidc_terraform_base_infra_additional_policy" {
   statement {
+    sid    = "ManageEventSchedules"
+    effect = "Allow"
+    actions = [
+      "events:*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
     sid    = "S3PutBucketNotification"
     effect = "Allow"
     actions = [
