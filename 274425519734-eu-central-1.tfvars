@@ -1,3 +1,4 @@
+env                        = "prod"
 env_name                   = "prod"
 vpc_single_nat_gateway     = true
 vpc_one_nat_gateway_per_az = false
