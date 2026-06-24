@@ -293,6 +293,18 @@ data "aws_iam_policy_document" "oidc_services_additional_policy" {
     ]
   }
   statement {
+    sid    = "S3BackendLock"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${module.state_bucket.s3_bucket_arn}/*.tflock"
+    ]
+  }
+  statement {
     sid    = "S3Write"
     effect = "Allow"
     actions = [
