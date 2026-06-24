@@ -22,3 +22,8 @@ jobs:
       aws_role_arn: "arn:aws:iam::244531986313:role/gh_base_infra"
       environment: "beta"
       tf_version: v1.14.9
+      kosli_host: ${{ vars.KOSLI_HOST }}
+      kosli_org: cyber-dojo
+      kosli_template_file: flow-templates/kosli-plan.yml
+    secrets:
+      kosli_api_token: ${{ secrets.KOSLI_API_TOKEN }}
