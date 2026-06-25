@@ -2,7 +2,7 @@ name: 'Detect Drift'
 
 on:
   schedule:
-    - cron: '20 6,18 * * *'
+    - cron: '20 6,8,18 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -27,6 +27,6 @@ jobs:
     name: ${{ matrix.name }}
     with:
       aws_region: eu-central-1
-      aws_role_arn: "arn:aws:iam::${{ matrix.aws_account_id }}:role/${{ github.event.repository.name }}"
+      aws_role_arn: "arn:aws:iam::${{ matrix.aws_account_id }}:role/gh_base_infra"
       environment: ${{ matrix.environment }}
       tf_version: v1.14.9
