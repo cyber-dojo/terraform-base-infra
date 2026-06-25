@@ -10,8 +10,11 @@ artifacts:
   dashboard-state:
     path: terraform/dashboard/main.tfstate
 
-  differ-state:
-    path: terraform/differ/differ.tfstate
+  # differ has a different deployment model to the other services
+  # so we will remove it from drift detection until we have the
+  # other services fully detecting drift in production
+  #differ-state:
+  #  path: terraform/differ/differ.tfstate
 
   exercises-start-points-state:
     path: terraform/exercises-start-points/main.tfstate
