@@ -2,7 +2,7 @@ name: 'Detect Drift'
 
 on:
   schedule:
-    - cron: '20 6,18 * * *'
+    - cron: '20 6,8,18 * * *'
   workflow_dispatch:
 
 concurrency:
