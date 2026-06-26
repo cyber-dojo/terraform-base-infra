@@ -1,3 +1,7 @@
+variable "env" {
+  type = string
+}
+
 variable "env_name" {
   type = string
 }
@@ -93,4 +97,15 @@ variable "config_record_all_supported" {
 variable "grafana_account_id" {
   type    = string
   default = "855032297737"
+}
+
+variable "kosli_api_host" {
+  type    = string
+  default = "https://app.kosli.com,https://staging.app.kosli.com,https://app.us.kosli.com"
+}
+
+variable "drift_detection_schedule" {
+  type        = string
+  description = "EventBridge schedule expression that controls how often the statefile drift-detection Lambda runs."
+  default     = "rate(10 minutes)"
 }

@@ -31,6 +31,16 @@ module "terraform_base_infra_policy" {
 
 data "aws_iam_policy_document" "oidc_terraform_base_infra_additional_policy" {
   statement {
+    sid    = "ManageEventSchedules"
+    effect = "Allow"
+    actions = [
+      "events:*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
     sid    = "S3PutBucketNotification"
     effect = "Allow"
     actions = [
@@ -280,6 +290,18 @@ data "aws_iam_policy_document" "oidc_services_additional_policy" {
     ]
     resources = [
       "*"
+    ]
+  }
+  statement {
+    sid    = "S3BackendLock"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${module.state_bucket.s3_bucket_arn}/*.tflock"
     ]
   }
   statement {

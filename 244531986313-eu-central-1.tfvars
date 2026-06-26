@@ -1,4 +1,5 @@
-env_name                    = "staging"
+env                         = "beta"
+env_name                    = "staging" # used for the ECS cluster
 vpc_single_nat_gateway      = true
 vpc_one_nat_gateway_per_az  = false
 vpc_azs_max                 = 2
