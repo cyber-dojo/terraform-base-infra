@@ -29,3 +29,26 @@ jobs:
     secrets:
       kosli_api_token: "${{ secrets.KOSLI_API_TOKEN}}"
       kosli_github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  kosli_attest_decision:
+    needs: apply
+    runs-on: ubuntu-latest
+    name: "Kosli attest decision"
+    env:
+      KOSLI_ORG: ${{ vars.KOSLI_ORG }}
+      KOSLI_HOST: ${{ vars.KOSLI_HOST }}
+      KOSLI_API_TOKEN: ${{ secrets.KOSLI_API_TOKEN }}
+      KOSLI_FLOW: ${{ needs.apply.outputs.kosli_flow }}
+      KOSLI_TRAIL: ${{ needs.apply.outputs.kosli_trail }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Kosli CLI
+        uses: kosli-dev/setup-cli-action@060e7f9bf6ac246743d6a62c5df847dfe7050867 # v5.2.1
+
+      - name: Kosli attest decision
+        run: |
+          kosli attest decision \
+            --control SDLC-CTRL-0002 \
+            --compliant=true \
+            --name provenance
