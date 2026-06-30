@@ -8,7 +8,7 @@ artifacts:
 
   custom-start-points-state:
     path: terraform/custom-start-points/main.tfstate
-  custom-drift:
+  custom-start-points-drift:
     path: terraform/custom-start-points/drift.plan.json
 
   dashboard-state:
@@ -23,12 +23,12 @@ artifacts:
 
   exercises-start-points-state:
     path: terraform/exercises-start-points/main.tfstate
-  exercises-drift:
+  exercises-start-points-drift:
     path: terraform/exercises-start-points/drift.plan.json
 
   languages-start-points-state:
     path: terraform/languages-start-points/main.tfstate
-  languages-drift:
+  languages-start-points-drift:
     path: terraform/languages-start-points/drift.plan.json
 
   nginx-state:
