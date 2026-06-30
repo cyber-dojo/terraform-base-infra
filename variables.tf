@@ -107,5 +107,5 @@ variable "kosli_api_host" {
 variable "drift_detection_schedule" {
   type        = string
   description = "EventBridge schedule expression that controls how often the statefile drift-detection Lambda runs."
-  default     = "rate(10 minutes)"
+  default     = "rate(5 minutes)"
 }

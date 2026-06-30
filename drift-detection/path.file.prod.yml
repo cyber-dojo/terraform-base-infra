@@ -24,15 +24,23 @@ artifacts:
 
   nginx-state:
     path: terraform/nginx/main.tfstate
+  nginx-drift:
+    path: terraform/nginx/drift.plan.json
 
   runner-state:
     path: terraform/runner/main.tfstate
+  runner-drift:
+    path: terraform/runner/drift.plan.json
 
   saver-state:
-    path: terraform/saver/saver.tfstate
+    path: terraform/saver/main.tfstate
+  saver-drift:
+    path: terraform/saver/drift.plan.json
 
   web-state:
     path: terraform/web/main.tfstate
+  web-drift:
+    path: terraform/web/drift.plan.json
 
   terraform-base-infra-state:
     path: terraform/terraform-base-infra/main.tfstate
