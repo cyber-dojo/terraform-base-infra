@@ -28,6 +28,26 @@ module "reporter_lambda" {
   create_package = true
   publish        = true
 
+  # Store the deployment package in S3 rather than reading it from the local,
+  # gitignored builds/ directory. On a fresh CI runner (and after the global
+  # TF_RECREATE_MISSING_LAMBDA_PACKAGE=false in tf.env) that directory starts
+  # empty, so a local filename leaves aws_lambda_function unable to read the
+  # zip ("reading ZIP file ...: no such file or directory"). Routing the
+  # package through S3 makes it durable, matching poll-ecr-guardduty and the
+  # kosli-dev docdb-creds-reporter.
+  store_on_s3              = true
+  s3_bucket                = module.lambda_package_bucket.s3_bucket_id
+  recreate_missing_package = true
+
+  # One-time bootstrap: this lambda was already deployed with a local-filename
+  # build, so its null_resource.archive is in state with a frozen trigger
+  # (recreate is forced false by tf.env). Adding store_on_s3 introduces an
+  # aws_s3_object that needs the zip built once, but the frozen trigger means
+  # the build never re-runs. Bumping hash_extra changes the package hash ->
+  # changes the archive trigger -> forces the build, writing the zip so the S3
+  # object can be created.
+  hash_extra = "statefile-paths-reporter-s3-bootstrap"
+
   layers = [
     local.kosli_cli_layer_arn,
   ]
@@ -64,6 +84,40 @@ module "reporter_lambda" {
   }
 
   cloudwatch_logs_retention_in_days = var.cloudwatch_logs_retention_in_days
+
+  tags = var.tags
+}
+
+locals {
+  environment_id             = "${data.aws_caller_identity.current.account_id}-${data.aws_region.current.region}"
+  lambda_package_bucket_name = format("tf-paths-reporter-pkg-%s", sha1(local.environment_id))
+}
+
+module "lambda_package_bucket" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "3.8.2"
+
+  bucket           = local.lambda_package_bucket_name
+  object_ownership = "ObjectWriter"
+
+  versioning = {
+    enabled = true
+  }
+
+  server_side_encryption_configuration = {
+    rule = {
+      apply_server_side_encryption_by_default = {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  attach_deny_insecure_transport_policy = true
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 
   tags = var.tags
 }
