@@ -25,7 +25,7 @@ artifacts:
   nginx-state:
     path: terraform/nginx/main.tfstate
   nginx-drift:
-    path: terraform/nginx/.plan.json
+    path: terraform/nginx/drift.plan.json
 
   runner-state:
     path: terraform/runner/main.tfstate
