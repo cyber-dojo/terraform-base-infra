@@ -17,7 +17,7 @@ artifacts:
     path: terraform/dashboard/drift.plan.json
 
   differ-state:
-    path: terraform/differ/differ.tfstate
+    path: terraform/differ/main.tfstate
   differ-drift:
     path: terraform/differ/drift.plan.json
 
