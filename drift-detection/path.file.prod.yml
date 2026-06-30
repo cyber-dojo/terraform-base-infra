@@ -3,24 +3,33 @@ artifacts:
 
   creator-state:
     path: terraform/creator/main.tfstate
+  creator-drift:
+    path: terraform/creator/drift.plan.json
 
   custom-start-points-state:
     path: terraform/custom-start-points/main.tfstate
+  custom-drift:
+    path: terraform/custom-start-points/drift.plan.json
 
   dashboard-state:
     path: terraform/dashboard/main.tfstate
+  dashboard-drift:
+    path: terraform/dashboard/drift.plan.json
 
-  # differ has a different deployment model to the other services
-  # so we will remove it from drift detection until we have the
-  # other services fully detecting drift in production
-  #differ-state:
-  #  path: terraform/differ/differ.tfstate
+  differ-state:
+    path: terraform/differ/main.tfstate
+  differ-drift:
+    path: terraform/differ/drift.plan.json
 
   exercises-start-points-state:
     path: terraform/exercises-start-points/main.tfstate
+  exercises-drift:
+    path: terraform/exercises-start-points/drift.plan.json
 
   languages-start-points-state:
     path: terraform/languages-start-points/main.tfstate
+  languages-drift:
+    path: terraform/languages-start-points/drift.plan.json
 
   nginx-state:
     path: terraform/nginx/main.tfstate
