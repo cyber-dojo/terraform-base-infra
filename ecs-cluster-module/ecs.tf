@@ -39,6 +39,17 @@ resource "aws_launch_template" "this" {
     enabled = true
   }
   tags = var.tags
+
+  lifecycle {
+    # We rarely launch new EC2 instances for the ECS cluster, so a newer AMI
+    # published by AWS has no practical effect on us. Ignore image_id changes
+    # to avoid daily `tf plan` drift when AWS releases a new AMI.
+    #
+    # NOTE: This ignore is permanent. If/when you DO want to pick up a new AMI,
+    # you must temporarily remove `image_id` from ignore_changes below (apply,
+    # then add it back), or run `terraform apply -replace` on this resource.
+    ignore_changes = [image_id]
+  }
 }
 
 # Get lowest possible spot price
