@@ -74,6 +74,7 @@ module "reporter_lambda" {
     KOSLI_API_TOKEN_SSM_PARAMETER_ARN = local.kosli_api_token_ssm_parameter_arn
     S3_BUCKET_NAME                    = var.s3_bucket_name
     PATHS_FILE                        = local.paths_file_name
+    MIN_ARTIFACT_AGE_SECONDS          = var.min_artifact_age_seconds
   }
 
   allowed_triggers = {
