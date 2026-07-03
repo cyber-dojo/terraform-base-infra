@@ -5,7 +5,7 @@ variable "name" {
 
 variable "env" {
   type        = string
-  description = "Environment name (e.g. beta, prod). Selects path.file.<env>.yml from this module's directory; the file must exist or terraform plan will fail."
+  description = "Environment name (e.g. staging, prod, infra-dev). Selects path.file.<env>.yml from this module's directory; the file must exist or terraform plan will fail."
 }
 
 variable "kosli_environment_name" {
@@ -64,6 +64,12 @@ variable "kosli_api_token_ssm_parameter_arn" {
   type        = string
   description = "ARN of the Kosli API token SSM parameter. If empty, defaults to the `kosli_api_token` parameter in the current account/region."
   default     = ""
+}
+
+variable "min_artifact_age_seconds" {
+  type        = number
+  default     = 180
+  description = "Skip the snapshot if any fingerprinted S3 object was modified more recently than this. Guards against reporting a statefile (or drift plan) whose attestation has not landed yet. Must exceed the pipelines' write-to-attest latency and be less than the snapshot schedule interval."
 }
 
 variable "kosli_api_token_kms_key_arn" {
