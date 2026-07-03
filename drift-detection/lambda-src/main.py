@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 
 import boto3
@@ -25,6 +26,12 @@ except Exception as e:
 WORKDIR = Path('/tmp/kosli-paths')
 PATHS_FILE_NAME = os.environ['PATHS_FILE']
 PATHS_FILE_SRC = Path(__file__).parent / PATHS_FILE_NAME
+
+# Files written to S3 more recently than this may not have been attested to
+# Kosli yet (the pipelines write the file first, then attest it). Reporting
+# such a file would flag the environment as non-compliant, so we skip the
+# whole snapshot and let the next scheduled run report it instead.
+MIN_ARTIFACT_AGE_SECONDS = int(os.environ.get('MIN_ARTIFACT_AGE_SECONDS', '180'))
 
 
 def parse_paths_file(text):
@@ -68,7 +75,19 @@ def lambda_handler(event, context):
         local = WORKDIR / key
         local.parent.mkdir(parents=True, exist_ok=True)
         logger.info("downloading s3://%s/%s -> %s", bucket, key, local)
-        s3_client.download_file(bucket, key, str(local))
+        # get_object (not download_file) so that LastModified describes the
+        # same bytes we fingerprint, avoiding a check-then-download race.
+        obj = s3_client.get_object(Bucket=bucket, Key=key)
+        age = (datetime.now(timezone.utc) - obj['LastModified']).total_seconds()
+        if age < MIN_ARTIFACT_AGE_SECONDS:
+            msg = (
+                f"s3://{bucket}/{key} was modified {age:.0f}s ago "
+                f"(< {MIN_ARTIFACT_AGE_SECONDS}s); its attestation may not have "
+                "landed yet. Skipping this snapshot; the next run will report it."
+            )
+            logger.warning(msg)
+            return {"statusCode": 200, "body": msg}
+        local.write_bytes(obj['Body'].read())
 
     env = os.environ.copy()
     env['KOSLI_API_TOKEN'] = kosli_api_token
