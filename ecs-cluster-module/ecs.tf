@@ -1,1 +1,187 @@
-IyBodHRwczovL2RvY3MuYXdzLmFtYXpvbi5jb20vQVdTRUMyL2xhdGVzdC9Vc2VyR3VpZGUvZWMyLWxhdW5jaC10ZW1wbGF0ZXMuaHRtbApyZXNvdXJjZSAiYXdzX2xhdW5jaF90ZW1wbGF0ZSIgInRoaXMiIHsKICBuYW1lX3ByZWZpeCAgICAgICAgICAgID0gIiR7dmFyLmVjc19jbHVzdGVyX25hbWV9LSIKICBkZXNjcmlwdGlvbiAgICAgICAgICAgID0gImVjcy1sdC0ke3Zhci5lY3NfY2x1c3Rlcl9uYW1lfSIKICB1cGRhdGVfZGVmYXVsdF92ZXJzaW9uID0gdHJ1ZQogIGltYWdlX2lkICAgICAgICAgICAgICAgPSBkYXRhLmF3c19zc21fcGFyYW1ldGVyLmFtYXpvbl9saW51eF9lY3MudmFsdWUKICBpbnN0YW5jZV90eXBlICAgICAgICAgID0gdmFyLmluc3RhbmNlX3R5cGVzX2xpc3RbMF0KICBlYnNfb3B0aW1pemVkICAgICAgICAgID0gdHJ1ZQogIHVzZXJfZGF0YSAgICAgICAgICAgICAgPSBkYXRhLmNsb3VkaW5pdF9jb25maWcudGhpcy5yZW5kZXJlZAogIGJsb2NrX2RldmljZV9tYXBwaW5ncyB7CiAgICBkZXZpY2VfbmFtZSA9ICIvZGV2L3h2ZGEiCgogICAgZWJzIHsKICAgICAgdm9sdW1lX3NpemUgPSB2YXIuZWJzX3Jvb3Rfc2l6ZQogICAgICB2b2x1bWVfdHlwZSA9IHZhci5lYnNfcm9vdF90eXBlCiAgICB9CiAgfQogIHRhZ19zcGVjaWZpY2F0aW9ucyB7CiAgICByZXNvdXJjZV90eXBlID0gImluc3RhbmNlIgogICAgdGFncyAgICAgICAgICA9IHsgIk5hbWUiIDogdmFyLmVjc19jbHVzdGVyX25hbWUgfQogIH0KICB0YWdfc3BlY2lmaWNhdGlvbnMgewogICAgcmVzb3VyY2VfdHlwZSA9ICJ2b2x1bWUiCiAgICB0YWdzICAgICAgICAgID0geyAiTmFtZSIgOiB2YXIuZWNzX2NsdXN0ZXJfbmFtZSB9CiAgfQogIG5ldHdvcmtfaW50ZXJmYWNlcyB7CiAgICBhc3NvY2lhdGVfcHVibGljX2lwX2FkZHJlc3MgPSBmYWxzZQogICAgc2VjdXJpdHlfZ3JvdXBzICAgICAgICAgICAgID0gW21vZHVsZS5zZWN1cml0eV9ncm91cF9lY3NfaW5zdGFuY2Uuc2VjdXJpdHlfZ3JvdXBfaWRdCiAgfQogIGlhbV9pbnN0YW5jZV9wcm9maWxlIHsKICAgIGFybiA9IGF3c19pYW1faW5zdGFuY2VfcHJvZmlsZS50aGlzLmFybgogIH0KICBtZXRhZGF0YV9vcHRpb25zIHsKICAgIGh0dHBfZW5kcG9pbnQgICAgICAgICAgICAgICA9ICJlbmFibGVkIgogICAgaHR0cF90b2tlbnMgICAgICAgICAgICAgICAgID0gInJlcXVpcmVkIgogICAgaHR0cF9wdXRfcmVzcG9uc2VfaG9wX2xpbWl0ID0gMQogIH0KICBtb25pdG9yaW5nIHsKICAgIGVuYWJsZWQgPSB0cnVlCiAgfQogIHRhZ3MgPSB2YXIudGFncwoKICBsaWZlY3ljbGUgewogICAgIyBXZSByYXJlbHkgbGF1bmNoIG5ldyBFQzIgaW5zdGFuY2VzIGZvciB0aGUgRUNTIGNsdXN0ZXIsIHNvIGEgbmV3ZXIgQU1JCiAgICAjIHB1Ymxpc2hlZCBieSBBV1MgaGFzIG5vIHByYWN0aWNhbCBlZmZlY3Qgb24gdXMuIElnbm9yZSBpbWFnZV9pZCBjaGFuZ2VzCiAgICAjIHRvIGF2b2lkIGRhaWx5IGB0ZiBwbGFuYCBkcmlmdCB3aGVuIEFXUyByZWxlYXNlcyBhIG5ldyBBTUkuCiAgICAjCiAgICAjIE5PVEU6IFRoaXMgaWdub3JlIGlzIHBlcm1hbmVudC4gSWYvd2hlbiB5b3UgRE8gd2FudCB0byBwaWNrIHVwIGEgbmV3IEFNSSwKICAgICMgeW91IG11c3QgdGVtcG9yYXJpbHkgcmVtb3ZlIGBpbWFnZV9pZGAgZnJvbSBpZ25vcmVfY2hhbmdlcyBiZWxvdyAoYXBwbHksCiAgICAjIHRoZW4gYWRkIGl0IGJhY2spLCBvciBydW4gYHRlcnJhZm9ybSBhcHBseSAtcmVwbGFjZWAgb24gdGhpcyByZXNvdXJjZS4KICAgIGlnbm9yZV9jaGFuZ2VzID0gW2ltYWdlX2lkXQogIH0KfQoKIyBHZXQgbG93ZXN0IHBvc3NpYmxlIHNwb3QgcHJpY2UKIyBodHRwczovL3JlZ2lzdHJ5LnRlcnJhZm9ybS5pby9tb2R1bGVzL2ZpdmV4bC9lYzItc3BvdC1wcmljZS9hd3MvbGF0ZXN0Cm1vZHVsZSAiZWMyX3Nwb3RfcHJpY2UiIHsKICBzb3VyY2UgICAgICAgICAgICAgICAgICAgICAgICA9ICJmaXZleGwvZWMyLXNwb3QtcHJpY2UvYXdzIgogIHZlcnNpb24gICAgICAgICAgICAgICAgICAgICAgID0gIjIuMC4wIgogIGF2YWlsYWJpbGl0eV96b25lc19uYW1lc19saXN0ID0gdmFyLnZwY19henMKICBpbnN0YW5jZV90eXBlc19saXN0ICAgICAgICAgICA9IHZhci5pbnN0YW5jZV90eXBlc19saXN0CiAgY3VzdG9tX3ByaWNlX21vZGlmaWVyICAgICAgICAgPSAxLjEKICBub3JtYWxpemF0aW9uX21vZGlmaWVyICAgICAgICA9IDEwMAp9CgojIFBsZWFzZSB1bmNoZWNrIHRoZSBzY2FsZSBsb2NrLWluIG1hbnVhbGx5IHRvIHVwZGF0ZSB0aGUgaW5zdGFuY2VzIGluIHRoZSBncm91cC4gTGFtYmRhIGNvZGUgaXMgcmVxdWlyZWQgZm9yIGF1dG9tYXRpb24uCnJlc291cmNlICJhd3NfYXV0b3NjYWxpbmdfZ3JvdXAiICJ0aGlzIiB7CiAgbmFtZV9wcmVmaXggICAgICAgICAgICAgICA9ICJhLWVjcy0iICMgZG9uJ3QgdXNlIGVjcy0gb3IgYXdzLSBoZXJlLiBjYXBhY2l0eV9wcm92aWRlciBuYW1lIGNhbid0IHN0YXJ0IHdpdGggaXQuCiAgZGVzaXJlZF9jYXBhY2l0eSAgICAgICAgICA9IHZhci5lY3NfY2x1c3Rlcl9kZXNpcmVkX2NhcGFjaXR5CiAgbWF4X3NpemUgICAgICAgICAgICAgICAgICA9IHZhci5lY3NfY2x1c3Rlcl9tYXhfc2l6ZQogIG1pbl9zaXplICAgICAgICAgICAgICAgICAgPSB2YXIuZWNzX2NsdXN0ZXJfbWluX3NpemUKICB2cGNfem9uZV9pZGVudGlmaWVyICAgICAgID0gdmFyLmFzZ192cGNfem9uZV9pZGVudGlmaWVyCiAgaGVhbHRoX2NoZWNrX3R5cGUgICAgICAgICA9ICJFQzIiCiAgZGVmYXVsdF9jb29sZG93biAgICAgICAgICA9IDMwMAogIGhlYWx0aF9jaGVja19ncmFjZV9wZXJpb2QgPSAxODAKICB0ZXJtaW5hdGlvbl9wb2xpY2llcyAgICAgID0gWyJPbGRlc3RMYXVuY2hUZW1wbGF0ZSIsICJPbGRlc3RJbnN0YW5jZSJdCiAgc2VydmljZV9saW5rZWRfcm9sZV9hcm4gICA9IHZhci5hc2dfc2VydmljZV9saW5rZWRfcm9sZV9hcm4KICBwcm90ZWN0X2Zyb21fc2NhbGVfaW4gICAgID0gdHJ1ZSAjIHJlcXVpcmVkIGZvciBlY3NfY2FwYWNpdHlfcHJvdmlkZXIgbWFuYWdlZF90ZXJtaW5hdGlvbl9wcm90ZWN0aW9uCiAgY2FwYWNpdHlfcmViYWxhbmNlICAgICAgICA9IHRydWUKICBtaXhlZF9pbnN0YW5jZXNfcG9saWN5IHsKICAgIGxhdW5jaF90ZW1wbGF0ZSB7CiAgICAgIGxhdW5jaF90ZW1wbGF0ZV9zcGVjaWZpY2F0aW9uIHsKICAgICAgICBsYXVuY2hfdGVtcGxhdGVfaWQgPSBhd3NfbGF1bmNoX3RlbXBsYXRlLnRoaXMuaWQKICAgICAgICB2ZXJzaW9uICAgICAgICAgICAgPSBhd3NfbGF1bmNoX3RlbXBsYXRlLnRoaXMubGF0ZXN0X3ZlcnNpb24KICAgICAgfQogICAgICBkeW5hbWljICJvdmVycmlkZSIgewogICAgICAgIGZvcl9lYWNoID0gdmFyLmluc3RhbmNlX3R5cGVzX2xpc3QKICAgICAgICBjb250ZW50IHsKICAgICAgICAgIGluc3RhbmNlX3R5cGUgPSBvdmVycmlkZS52YWx1ZQogICAgICAgIH0KICAgICAgfQogICAgfQogICAgaW5zdGFuY2VzX2Rpc3RyaWJ1dGlvbiB7CiAgICAgIG9uX2RlbWFuZF9iYXNlX2NhcGFjaXR5ICAgICAgICAgICAgICAgICAgPSB2YXIuZWNzX2NsdXN0ZXJfb25fZGVtYW5kX2Jhc2VfY2FwYWNpdHkgICAgICAgICAgICAgICAgICAjIGhvdyBtYW55IG9uLWRlbWFuZAogICAgICBvbl9kZW1hbmRfcGVyY2VudGFnZV9hYm92ZV9iYXNlX2NhcGFjaXR5ID0gdmFyLmVjc19jbHVzdGVyX29uX2RlbWFuZF9wZXJjZW50YWdlX2Fib3ZlX2Jhc2VfY2FwYWNpdHkgIyAlIG9mIG9uLWRlbWFuZCBmcm9tIDAlIHRvIDEwMCUKICAgICAgc3BvdF9hbGxvY2F0aW9uX3N0cmF0ZWd5ICAgICAgICAgICAgICAgICA9ICJsb3dlc3QtcHJpY2UiCiAgICAgICMgVGhpcyBpcyByZWNvbXB1dGVkIGZyb20gdGhlIGxpdmUgQVdTIHNwb3QgbWFya2V0IHByaWNlIChzZWUKICAgICAgIyBtb2R1bGUuZWMyX3Nwb3RfcHJpY2UgYWJvdmUpIG9uIGV2ZXJ5IHBsYW4sIHNvIGl0IGNoYW5nZXMgd2l0aCB0aGUKICAgICAgIyBtYXJrZXQgcmF0aGVyIHRoYW4gd2l0aCBhbnkgcmVhbCBjb25maWcgY2hhbmdlLiBJZ25vcmVkIGJlbG93IGZvciB0aGUKICAgICAgIyBzYW1lIHJlYXNvbiBhcyBsYXVuY2hfdGVtcGxhdGUuaW1hZ2VfaWQgYWJvdmU6IHdpdGhvdXQgdGhpcywgZGFpbHkKICAgICAgIyBkcmlmdC1kZXRlY3Rpb24gYHRmIHBsYW5gIHJ1bnMgZmxhZyByb3V0aW5lIHNwb3QtcHJpY2UgbW92ZW1lbnQgYXMKICAgICAgIyBkcmlmdC4gVGhlIGFjdHVhbCBsaXZlIGJpZCBpcyBzdGlsbCBzZXQgY29ycmVjdGx5IG9uIGV2ZXJ5IHJlYWwgYXBwbHkuCiAgICAgIHNwb3RfbWF4X3ByaWNlICAgICAgICAgICAgICAgICAgICAgICAgICAgPSBtb2R1bGUuZWMyX3Nwb3RfcHJpY2Uuc3BvdF9wcmljZV9jdXJyZW50X21heF9tb2QKICAgICAgc3BvdF9pbnN0YW5jZV9wb29scyAgICAgICAgICAgICAgICAgICAgICA9IDEwCiAgICB9CiAgfQogIGxpZmVjeWNsZSB7CiAgICBpZ25vcmVfY2hhbmdlcyA9IFsKICAgICAgZGVzaXJlZF9jYXBhY2l0eSwKICAgICAgbWl4ZWRfaW5zdGFuY2VzX3BvbGljeVswXS5pbnN0YW5jZXNfZGlzdHJpYnV0aW9uWzBdLnNwb3RfbWF4X3ByaWNlLAogICAgXQogICAgY3JlYXRlX2JlZm9yZV9kZXN0cm95ID0gdHJ1ZQogIH0KICBkeW5hbWljICJ0YWciIHsKICAgIGZvcl9lYWNoID0gY29uY2F0KHZhci5hc2dfdGFncywgW3sga2V5ID0gIkFtYXpvbkVDU01hbmFnZWQiLCB2YWx1ZSA9ICIxIiB9XSkKICAgIGNvbnRlbnQgewogICAgICBrZXkgICAgICAgICAgICAgICAgID0gdGFnLnZhbHVlLmtleQogICAgICB2YWx1ZSAgICAgICAgICAgICAgID0gdGFnLnZhbHVlLnZhbHVlCiAgICAgIHByb3BhZ2F0ZV9hdF9sYXVuY2ggPSB0cnVlCiAgICB9CiAgfQp9CgojIFJlbW92ZSBzY2FsZS1pbiBwcm90ZWN0aW9uIGZvciBpbnN0YW5jZS1yZWZyZXNoCiMgaHR0cHM6Ly9naXRodWIuY29tL2F3cy9jb250YWluZXJzLXJvYWRtYXAvaXNzdWVzLzI1NgojIElBTTogYXV0b3NjYWxpbmc6U2V0SW5zdGFuY2VQcm90ZWN0aW9uLCBhdXRvc2NhbGluZzpEZXNjcmliZUF1dG9TY2FsaW5nR3JvdXBzCiMgdGhpcyBpcyBydW4gd2hlbiB0aGUgbGF1bmNoIHRlbXBsYXRlIGlzIHVwZGF0ZWQsIGFuZCBvbmx5IHRoZW4sIGFzIHNwZWNpZmllZCBpbiB0aGUgdHJpZ2dlci4KcmVzb3VyY2UgIm51bGxfcmVzb3VyY2UiICJyZW1vdmVfc2NhbGVfaW5fcHJvdGVjdGlvbiIgewogIHRyaWdnZXJzID0gewogICAgbGF1bmNoX3RlbXBsYXRlX3ZlcnNpb24gPSBhd3NfbGF1bmNoX3RlbXBsYXRlLnRoaXMubGF0ZXN0X3ZlcnNpb24KICB9CiAgcHJvdmlzaW9uZXIgImxvY2FsLWV4ZWMiIHsKICAgIGNvbW1hbmQgPSA8PEVPRgplY2hvICJMYXVuY2hUZW1wbGF0ZUlkOiAke2F3c19sYXVuY2hfdGVtcGxhdGUudGhpcy5pZH0gTGF1bmNoVGVtcGxhdGVWZXJzaW9uOiAke2F3c19sYXVuY2hfdGVtcGxhdGUudGhpcy5sYXRlc3RfdmVyc2lvbn0iCmZvciBJTlNUQU5DRV9JRCBpbiAkKGF3cyBhdXRvc2NhbGluZyBkZXNjcmliZS1hdXRvLXNjYWxpbmctZ3JvdXBzIC0tcmVnaW9uICR7dmFyLmF3c19yZWdpb259IC0tYXV0by1zY2FsaW5nLWdyb3VwLW5hbWUgJHthd3NfYXV0b3NjYWxpbmdfZ3JvdXAudGhpcy5uYW1lfSAtLXF1ZXJ5ICdBdXRvU2NhbGluZ0dyb3Vwc1tdLkluc3RhbmNlc1s/TGF1bmNoVGVtcGxhdGUuTGF1bmNoVGVtcGxhdGVJZD09YCR7YXdzX2xhdW5jaF90ZW1wbGF0ZS50aGlzLmlkfWAgJiYgTGF1bmNoVGVtcGxhdGUuVmVyc2lvbiE9YCIke2F3c19sYXVuY2hfdGVtcGxhdGUudGhpcy5sYXRlc3RfdmVyc2lvbn0iYF0uSW5zdGFuY2VJZCcgLS1vdXRwdXQgdGV4dCk7CmRvCiAgZWNobyAiUmVtb3ZlIHNjYWxlLWluIHByb3RlY3Rpb24gZnJvbSAkSU5TVEFOQ0VfSUQiCiAgYXdzIGF1dG9zY2FsaW5nIHNldC1pbnN0YW5jZS1wcm90ZWN0aW9uIC0tcmVnaW9uICR7dmFyLmF3c19yZWdpb259IC0taW5zdGFuY2UtaWRzICRJTlNUQU5DRV9JRCAtLWF1dG8tc2NhbGluZy1ncm91cC1uYW1lICR7YXdzX2F1dG9zY2FsaW5nX2dyb3VwLnRoaXMubmFtZX0gLS1uby1wcm90ZWN0ZWQtZnJvbS1zY2FsZS1pbiAtLW91dHB1dCB0ZXh0CmRvbmUKRU9GCiAgfQp9CgojIGh0dHBzOi8vYXdzLmFtYXpvbi5jb20vcnUvYmxvZ3MvY29udGFpbmVycy9kZWVwLWRpdmUtb24tYW1hem9uLWVjcy1jbHVzdGVyLWF1dG8tc2NhbGluZy8KcmVzb3VyY2UgImF3c19lY3NfY2FwYWNpdHlfcHJvdmlkZXIiICJ0aGlzIiB7CiAgbmFtZSA9IGF3c19hdXRvc2NhbGluZ19ncm91cC50aGlzLm5hbWUgIyBGb3JjaW5nIG5ldyBjYXBhY2l0eSBwcm92aWRlciBuYW1lIGRlcGVuZHMgb24gQVNHIG5hbWUKICBhdXRvX3NjYWxpbmdfZ3JvdXBfcHJvdmlkZXIgewogICAgYXV0b19zY2FsaW5nX2dyb3VwX2FybiAgICAgICAgID0gYXdzX2F1dG9zY2FsaW5nX2dyb3VwLnRoaXMuYXJuCiAgICBtYW5hZ2VkX3Rlcm1pbmF0aW9uX3Byb3RlY3Rpb24gPSB2YXIubWFuYWdlZF9zY2FsaW5nX3N0YXR1cwogICAgbWFuYWdlZF9zY2FsaW5nIHsKICAgICAgbWF4aW11bV9zY2FsaW5nX3N0ZXBfc2l6ZSA9IDEKICAgICAgbWluaW11bV9zY2FsaW5nX3N0ZXBfc2l6ZSA9IDEKICAgICAgc3RhdHVzICAgICAgICAgICAgICAgICAgICA9IHZhci5tYW5hZ2VkX3NjYWxpbmdfc3RhdHVzCiAgICAgIHRhcmdldF9jYXBhY2l0eSAgICAgICAgICAgPSAxMDAKICAgIH0KICB9CiAgdGFncyA9IHZhci50YWdzCiAgbGlmZWN5Y2xlIHsKICAgIGNyZWF0ZV9iZWZvcmVfZGVzdHJveSA9IHRydWUKICB9Cn0KCnJlc291cmNlICJhd3NfZWNzX2NsdXN0ZXIiICJ0aGlzIiB7CiAgbmFtZSA9IHZhci5lY3NfY2x1c3Rlcl9uYW1lCiAgdGFncyA9IHZhci50YWdzCiAgY29uZmlndXJhdGlvbiB7CiAgICBleGVjdXRlX2NvbW1hbmRfY29uZmlndXJhdGlvbiB7CiAgICAgIGttc19rZXlfaWQgPSB2YXIuZWNzX2V4ZWNfa21zX2tleV9pZAogICAgICBsb2dnaW5nICAgID0gIk9WRVJSSURFIgoKICAgICAgbG9nX2NvbmZpZ3VyYXRpb24gewogICAgICAgIHMzX2J1Y2tldF9uYW1lICAgICAgICAgICAgICAgPSB2YXIuZWNzX2V4ZWNfczNfYnVja2V0X25hbWUKICAgICAgICBzM19rZXlfcHJlZml4ICAgICAgICAgICAgICAgID0gdmFyLmVjc19jbHVzdGVyX25hbWUKICAgICAgICBzM19idWNrZXRfZW5jcnlwdGlvbl9lbmFibGVkID0gdHJ1ZQogICAgICB9CiAgICB9CiAgfQp9CgpyZXNvdXJjZSAiYXdzX2Vjc19jbHVzdGVyX2NhcGFjaXR5X3Byb3ZpZGVycyIgInRoaXMiIHsKICBjbHVzdGVyX25hbWUgICAgICAgPSB2YXIuZWNzX2NsdXN0ZXJfbmFtZQogIGNhcGFjaXR5X3Byb3ZpZGVycyA9IFthd3NfZWNzX2NhcGFjaXR5X3Byb3ZpZGVyLnRoaXMubmFtZV0KCiAgZGVmYXVsdF9jYXBhY2l0eV9wcm92aWRlcl9zdHJhdGVneSB7CiAgICBjYXBhY2l0eV9wcm92aWRlciA9IGF3c19lY3NfY2FwYWNpdHlfcHJvdmlkZXIudGhpcy5uYW1lCiAgfQp9Cg==
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html
+resource "aws_launch_template" "this" {
+  name_prefix            = "${var.ecs_cluster_name}-"
+  description            = "ecs-lt-${var.ecs_cluster_name}"
+  update_default_version = true
+  image_id               = data.aws_ssm_parameter.amazon_linux_ecs.value
+  instance_type          = var.instance_types_list[0]
+  ebs_optimized          = true
+  user_data              = data.cloudinit_config.this.rendered
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size = var.ebs_root_size
+      volume_type = var.ebs_root_type
+    }
+  }
+  tag_specifications {
+    resource_type = "instance"
+    tags          = { "Name" : var.ecs_cluster_name }
+  }
+  tag_specifications {
+    resource_type = "volume"
+    tags          = { "Name" : var.ecs_cluster_name }
+  }
+  network_interfaces {
+    associate_public_ip_address = false
+    security_groups             = [module.security_group_ecs_instance.security_group_id]
+  }
+  iam_instance_profile {
+    arn = aws_iam_instance_profile.this.arn
+  }
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+  monitoring {
+    enabled = true
+  }
+  tags = var.tags
+
+  lifecycle {
+    # We rarely launch new EC2 instances for the ECS cluster, so a newer AMI
+    # published by AWS has no practical effect on us. Ignore image_id changes
+    # to avoid daily `tf plan` drift when AWS releases a new AMI.
+    #
+    # NOTE: This ignore is permanent. If/when you DO want to pick up a new AMI,
+    # you must temporarily remove `image_id` from ignore_changes below (apply,
+    # then add it back), or run `terraform apply -replace` on this resource.
+    ignore_changes = [image_id]
+  }
+}
+
+# Get lowest possible spot price
+# https://registry.terraform.io/modules/fivexl/ec2-spot-price/aws/latest
+module "ec2_spot_price" {
+  source                        = "fivexl/ec2-spot-price/aws"
+  version                       = "2.0.0"
+  availability_zones_names_list = var.vpc_azs
+  instance_types_list           = var.instance_types_list
+  custom_price_modifier         = 1.1
+  normalization_modifier        = 100
+}
+
+# Please uncheck the scale lock-in manually to update the instances in the group. Lambda code is required for automation.
+resource "aws_autoscaling_group" "this" {
+  name_prefix               = "a-ecs-" # don't use ecs- or aws- here. capacity_provider name can't start with it.
+  desired_capacity          = var.ecs_cluster_desired_capacity
+  max_size                  = var.ecs_cluster_max_size
+  min_size                  = var.ecs_cluster_min_size
+  vpc_zone_identifier       = var.asg_vpc_zone_identifier
+  health_check_type         = "EC2"
+  default_cooldown          = 300
+  health_check_grace_period = 180
+  termination_policies      = ["OldestLaunchTemplate", "OldestInstance"]
+  service_linked_role_arn   = var.asg_service_linked_role_arn
+  protect_from_scale_in     = true # required for ecs_capacity_provider managed_termination_protection
+  capacity_rebalance        = true
+  mixed_instances_policy {
+    launch_template {
+      launch_template_specification {
+        launch_template_id = aws_launch_template.this.id
+        version            = aws_launch_template.this.latest_version
+      }
+      dynamic "override" {
+        for_each = var.instance_types_list
+        content {
+          instance_type = override.value
+        }
+      }
+    }
+    instances_distribution {
+      on_demand_base_capacity                  = var.ecs_cluster_on_demand_base_capacity                  # how many on-demand
+      on_demand_percentage_above_base_capacity = var.ecs_cluster_on_demand_percentage_above_base_capacity # % of on-demand from 0% to 100%
+      spot_allocation_strategy                 = "lowest-price"
+      # This is recomputed from the live AWS spot market price (see
+      # module.ec2_spot_price above) on every plan, so it changes with the
+      # market rather than with any real config change. Ignored below for the
+      # same reason as launch_template.image_id above: without this, daily
+      # drift-detection `tf plan` runs flag routine spot-price movement as
+      # drift. The actual live bid is still set correctly on every real apply.
+      spot_max_price                           = module.ec2_spot_price.spot_price_current_max_mod
+      spot_instance_pools                      = 10
+    }
+  }
+  lifecycle {
+    ignore_changes = [
+      desired_capacity,
+      mixed_instances_policy[0].instances_distribution[0].spot_max_price,
+    ]
+    create_before_destroy = true
+  }
+  dynamic "tag" {
+    for_each = concat(var.asg_tags, [{ key = "AmazonECSManaged", value = "1" }])
+    content {
+      key                 = tag.value.key
+      value               = tag.value.value
+      propagate_at_launch = true
+    }
+  }
+}
+
+# Remove scale-in protection for instance-refresh
+# https://github.com/aws/containers-roadmap/issues/256
+# IAM: autoscaling:SetInstanceProtection, autoscaling:DescribeAutoScalingGroups
+# this is run when the launch template is updated, and only then, as specified in the trigger.
+resource "null_resource" "remove_scale_in_protection" {
+  triggers = {
+    launch_template_version = aws_launch_template.this.latest_version
+  }
+  provisioner "local-exec" {
+    command = <<EOF
+echo "LaunchTemplateId: ${aws_launch_template.this.id} LaunchTemplateVersion: ${aws_launch_template.this.latest_version}"
+for INSTANCE_ID in $(aws autoscaling describe-auto-scaling-groups --region ${var.aws_region} --auto-scaling-group-name ${aws_autoscaling_group.this.name} --query 'AutoScalingGroups[].Instances[?LaunchTemplate.LaunchTemplateId==`${aws_launch_template.this.id}` && LaunchTemplate.Version!=`"${aws_launch_template.this.latest_version}"`].InstanceId' --output text);
+do
+  echo "Remove scale-in protection from $INSTANCE_ID"
+  aws autoscaling set-instance-protection --region ${var.aws_region} --instance-ids $INSTANCE_ID --auto-scaling-group-name ${aws_autoscaling_group.this.name} --no-protected-from-scale-in --output text
+done
+EOF
+  }
+}
+
+# https://aws.amazon.com/ru/blogs/containers/deep-dive-on-amazon-ecs-cluster-auto-scaling/
+resource "aws_ecs_capacity_provider" "this" {
+  name = aws_autoscaling_group.this.name # Forcing new capacity provider name depends on ASG name
+  auto_scaling_group_provider {
+    auto_scaling_group_arn         = aws_autoscaling_group.this.arn
+    managed_termination_protection = var.managed_scaling_status
+    managed_scaling {
+      maximum_scaling_step_size = 1
+      minimum_scaling_step_size = 1
+      status                    = var.managed_scaling_status
+      target_capacity           = 100
+    }
+  }
+  tags = var.tags
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_ecs_cluster" "this" {
+  name = var.ecs_cluster_name
+  tags = var.tags
+  configuration {
+    execute_command_configuration {
+      kms_key_id = var.ecs_exec_kms_key_id
+      logging    = "OVERRIDE"
+
+      log_configuration {
+        s3_bucket_name               = var.ecs_exec_s3_bucket_name
+        s3_key_prefix                = var.ecs_cluster_name
+        s3_bucket_encryption_enabled = true
+      }
+    }
+  }
+}
+
+resource "aws_ecs_cluster_capacity_providers" "this" {
+  cluster_name       = var.ecs_cluster_name
+  capacity_providers = [aws_ecs_capacity_provider.this.name]
+
+  default_capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.this.name
+  }
+}
