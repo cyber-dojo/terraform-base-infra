@@ -52,17 +52,6 @@ resource "aws_launch_template" "this" {
   }
 }
 
-# Get lowest possible spot price
-# https://registry.terraform.io/modules/fivexl/ec2-spot-price/aws/latest
-module "ec2_spot_price" {
-  source                        = "fivexl/ec2-spot-price/aws"
-  version                       = "2.0.0"
-  availability_zones_names_list = var.vpc_azs
-  instance_types_list           = var.instance_types_list
-  custom_price_modifier         = 1.1
-  normalization_modifier        = 100
-}
-
 # Please uncheck the scale lock-in manually to update the instances in the group. Lambda code is required for automation.
 resource "aws_autoscaling_group" "this" {
   name_prefix               = "a-ecs-" # don't use ecs- or aws- here. capacity_provider name can't start with it.
@@ -94,21 +83,11 @@ resource "aws_autoscaling_group" "this" {
       on_demand_base_capacity                  = var.ecs_cluster_on_demand_base_capacity                  # how many on-demand
       on_demand_percentage_above_base_capacity = var.ecs_cluster_on_demand_percentage_above_base_capacity # % of on-demand from 0% to 100%
       spot_allocation_strategy                 = "lowest-price"
-      # This is recomputed from the live AWS spot market price (see
-      # module.ec2_spot_price above) on every plan, so it changes with the
-      # market rather than with any real config change. Ignored below for the
-      # same reason as launch_template.image_id above: without this, daily
-      # drift-detection `tf plan` runs flag routine spot-price movement as
-      # drift. The actual live bid is still set correctly on every real apply.
-      spot_max_price      = module.ec2_spot_price.spot_price_current_max_mod
-      spot_instance_pools = 10
+      spot_instance_pools                      = 10
     }
   }
   lifecycle {
-    ignore_changes = [
-      desired_capacity,
-      mixed_instances_policy[0].instances_distribution[0].spot_max_price,
-    ]
+    ignore_changes        = [desired_capacity]
     create_before_destroy = true
   }
   dynamic "tag" {
