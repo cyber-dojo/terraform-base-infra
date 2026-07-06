@@ -100,8 +100,8 @@ resource "aws_autoscaling_group" "this" {
       # same reason as launch_template.image_id above: without this, daily
       # drift-detection `tf plan` runs flag routine spot-price movement as
       # drift. The actual live bid is still set correctly on every real apply.
-      spot_max_price                           = module.ec2_spot_price.spot_price_current_max_mod
-      spot_instance_pools                      = 10
+      spot_max_price      = module.ec2_spot_price.spot_price_current_max_mod
+      spot_instance_pools = 10
     }
   }
   lifecycle {
