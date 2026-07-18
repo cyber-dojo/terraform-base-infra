@@ -359,6 +359,7 @@ module "oidc_services_role" {
     "cyber-dojo/runner",
     "cyber-dojo/saver",
     "cyber-dojo/shas",
+    "cyber-dojo/spooler",
     "cyber-dojo/web",
     "cyber-dojo/version-reporter",
     "cyber-dojo/versioner",
