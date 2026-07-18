@@ -360,7 +360,10 @@ module "oidc_services_role" {
     "cyber-dojo/runner",
     "cyber-dojo/saver",
     "cyber-dojo/shas",
-    "cyber-dojo/spooler",
+    # spooler was created after GitHub enabled immutable OIDC subject claims, so
+    # its token subject embeds the numeric org and repo ids instead of the plain
+    # cyber-dojo/spooler path. The trust must match that immutable form.
+    "cyber-dojo@19868796/spooler@1304186901",
     "cyber-dojo/web",
     "cyber-dojo/version-reporter",
     "cyber-dojo/versioner",
