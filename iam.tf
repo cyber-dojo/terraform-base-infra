@@ -322,6 +322,7 @@ data "aws_iam_policy_document" "oidc_services_additional_policy" {
       "${module.state_bucket.s3_bucket_arn}/terraform/nginx*",
       "${module.state_bucket.s3_bucket_arn}/terraform/repler*",
       "${module.state_bucket.s3_bucket_arn}/terraform/runner*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/spooler*",
       "${module.state_bucket.s3_bucket_arn}/terraform/saver*",
       "${module.state_bucket.s3_bucket_arn}/terraform/web*",
       "${module.state_bucket.s3_bucket_arn}/terraform/version-reporter*"
