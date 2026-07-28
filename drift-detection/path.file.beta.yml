@@ -46,6 +46,11 @@ artifacts:
   saver-drift:
     path: terraform/saver/drift.plan.json
 
+  spooler-state:
+    path: terraform/spooler/main.tfstate
+  spooler-drift:
+    path: terraform/spooler/drift.plan.json
+
   web-state:
     path: terraform/web/main.tfstate
   web-drift:

@@ -322,6 +322,7 @@ data "aws_iam_policy_document" "oidc_services_additional_policy" {
       "${module.state_bucket.s3_bucket_arn}/terraform/nginx*",
       "${module.state_bucket.s3_bucket_arn}/terraform/repler*",
       "${module.state_bucket.s3_bucket_arn}/terraform/runner*",
+      "${module.state_bucket.s3_bucket_arn}/terraform/spooler*",
       "${module.state_bucket.s3_bucket_arn}/terraform/saver*",
       "${module.state_bucket.s3_bucket_arn}/terraform/web*",
       "${module.state_bucket.s3_bucket_arn}/terraform/version-reporter*"
@@ -359,6 +360,10 @@ module "oidc_services_role" {
     "cyber-dojo/runner",
     "cyber-dojo/saver",
     "cyber-dojo/shas",
+    # spooler was created after GitHub enabled immutable OIDC subject claims, so
+    # its token subject embeds the numeric org and repo ids instead of the plain
+    # cyber-dojo/spooler path. The trust must match that immutable form.
+    "cyber-dojo@19868796/spooler@1304186901",
     "cyber-dojo/web",
     "cyber-dojo/version-reporter",
     "cyber-dojo/versioner",
