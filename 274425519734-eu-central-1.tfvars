@@ -11,7 +11,9 @@ ebs_snapshot_retention_period_days = 60
 
 ecs_clusters = {
   app = {
-    instance_types_list    = ["c5a.xlarge"] # 1-year saving plan for c5a family purchased 09.10.24; hourly commitment $0.21500
+    # Upgraded from c5a.xlarge; see C8A_UPGRADE_PLAN.md. The c5a-family saving plan
+    # referenced here previously was a 1-year term bought 09.10.24, so it has expired.
+    instance_types_list    = ["c8a.xlarge"]
     managed_scaling_status = "DISABLED"
 
     ecs_cluster_desired_capacity                         = 1
