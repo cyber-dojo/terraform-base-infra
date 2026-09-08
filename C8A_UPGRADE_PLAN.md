@@ -87,7 +87,9 @@ real infrastructure at the `master` → `prod` merge.
   bakes its ID into `aws_cloudwatch_metric_alarm.ebs_high_io`. When the instance is replaced the old
   root volume is deleted, so the alarm silently stops reporting (`treat_missing_data = "ignore"`).
   A second apply after the cutover re-points it. See step 10.
-- **Pricing is not a like-for-like swap.** See P3.
+- **Cost rises by roughly $50/month, and the commitment is already flexible.** The on-demand rate
+  comparison was done when the change was agreed (kosli-dev/server#6752). The org's Compute Savings
+  Plan covers c8a without any change, so nothing needs buying or cancelling. See P3.
 - **Beta stays on c5a, so the two environments diverge.** This is intended, but it means beta is no
   longer a faithful rehearsal environment for anything instance-type-sensitive. Worth a note in the
   PR that raises beta later, if the upgrade proves out.
@@ -131,18 +133,17 @@ All commands target the production account (`274425519734`), eu-central-1.
   described in the `lifecycle` block's comment — but do that as a **separate change on a different
   day**, not bundled into this one.
 
-- [ ] **P3. Check what a c5a savings commitment currently covers.** The comment this change replaces
-  referred to a 1-year plan bought 2024-10-09, which would have expired 2025-10-09 — confirm nothing
-  was renewed. An EC2 Instance Savings Plan is locked to an instance *family* and region, so any
-  live c5a commitment would be stranded by this change, and c8a would bill at full on-demand.
-  ```
-  aws savingsplans describe-savings-plans --region us-east-1 --states active
-  aws ec2 describe-reserved-instances --region eu-central-1 \
-    --filters Name=state,Values=active
-  ```
-  Also compare the two on-demand rates for eu-central-1 in the AWS pricing calculator before
-  committing — c8a is a newer generation and is not necessarily cheaper per hour, only per unit of
-  work. This is a "know what you're signing up for" check, not a blocker.
+- [x] **P3. Savings commitment — checked, no action needed.** The c5a-family plan referenced in the
+  old tfvars comment was a 1-year term bought 2024-10-09 and was not renewed in the same form.
+  Coverage now comes from a **Compute** Savings Plan held by the management account that the
+  production cyber-dojo account is linked to. A Compute Savings Plan is flexible across instance
+  family, size, region, OS and tenancy, so it applies to c8a usage automatically — unlike an EC2
+  Instance Savings Plan, which is locked to a family and region and would have been stranded by this
+  change. There is nothing to buy, migrate or cancel before Thursday.
+
+  A c8a-specific EC2 Instance Savings Plan would save roughly $15/month more than the Compute plan
+  already does. That is not worth the work of managing a second commitment, so it is deliberately
+  not being pursued. Revisit only if the fleet grows enough to change the arithmetic.
 
 - [ ] **P4. Record current ECS service desired counts,** so step 9 has a target.
   ```
