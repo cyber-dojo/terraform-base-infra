@@ -6,7 +6,7 @@ resource "aws_launch_template" "this" {
   image_id               = data.aws_ssm_parameter.amazon_linux_ecs.value
   instance_type          = var.instance_types_list[0]
   ebs_optimized          = true
-  user_data              = data.cloudinit_config.this.rendered
+  user_data              = sensitive(data.cloudinit_config.this.rendered)
   block_device_mappings {
     device_name = "/dev/xvda"
 
